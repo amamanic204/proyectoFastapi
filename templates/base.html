@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>
+        {% block titulo %}{% endblock titulo %}
+    </title>
+    <meta name="description" content="FastAPI Application">
+    <meta name="author" content="me">
+
+    <!-- Stylesheet -->
+    <!-- <link rel="stylesheet"
+          type="text/css"
+          href="{{ url_for("static", path='css/estilos.css') }}"> -->
+
+    <!-- Favicon for all browsers -->
+    <!-- <link rel="icon"
+          href="{{ url_for('static', path='icons/favicon.ico') }}"
+          sizes="any"> -->
+    <!-- <link rel="icon"
+          href="{{ url_for('static', path='icons/icon.svg') }}"
+          type="image/svg+xml"> -->
+    <!-- Apple touch icon for iOS devices -->
+    <!-- <link rel="apple-touch-icon"
+          sizes="180x180"
+          href="{{ url_for('static', path='icons/icon.png') }}"> -->
+
+    <!-- Content Security Policy: Uncomment to enhance security by restricting where content can be loaded from (useful for preventing certain attacks like XSS). Update if adding external sources (e.g., Google Fonts, Bootstrap CDN, analytics, etc). -->
+    <!-- <meta http-equiv="Content-Security-Policy" content=" default-src 'self'; script-src 'self' code.jquery.com; style-src 'self' fonts.googleapis.com; font-src fonts.gstatic.com; img-src 'self' images.examplecdn.com; "> -->
+
+    <style>
+        /* atomos */
+        :root {
+            --color-negro: black;
+            --color-oscuro: rgb(44, 38, 38);
+            --color-gris: gray;
+            --color-blanco: white;
+            --color-humo-blanco: whitesmoke;
+            --color-aliceblue: aliceblue;
+            --color-dorado: goldenrod;
+            --color-rojo-la-paz: #000; 
+            --color-verde-la-paz: #000; 
+            --fuente-familia: Arial, Helvetica, sans-serif;
+            --fuente-tamano: 14px;
+        }
+
+        /* basico */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: var(--fuente-familia);
+            font-size: var(--fuente-tamano);
+            /* font-weight: bold; */
+        }
+
+        body {
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+            background-color: var(--color-blanco);
+        }
+
+        .container {
+            width: 100%;
+            min-height: 100vh;
+            /* max-width: 800px; */
+            min-width: 300px;
+            background-color: var(--color-blanco);
+            display: flex;
+            flex-direction: column;
+            /* background-color: red; */
+        }
+
+        .cuerpo {
+            min-height: 100vh;
+        }
+
+        footer {
+            width: 100%;
+            padding: 10px;
+            background: none;
+            color: var(--color-negro);
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+        }
+
+        a {
+            /* text-decoration: none;
+            color: inherit; */
+            font-size: inherit;
+        }
+    </style>    
+    {% import 'macros.html' as macros with context %}
+</head>
+<body>
+    <div class="container">
+        <header>
+            {% block header %}
+            {% endblock header %}
+        </header>
+        <div class="cuerpo">
+            {% block content %}
+            {% endblock content %}
+        </div>
+        <footer>
+            <p> &copy; opyright </p>
+        </footer>
+    </div>
+</body>
+<!-- <script src="{{ url_for('static', path='js/script.js') }}"></script> -->
+</html>

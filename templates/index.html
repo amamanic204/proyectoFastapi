@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+
+{% block titulo %}
+    UNTA
+{% endblock titulo %}
+
+{% block header %}
+<div class="izquierda">
+    <div style="width:70px;">{{ macros.logo() }}</div>
+</div>
+<div class="centro">
+    {{ macros.barraDeBusqueda() }}
+</div>
+<div class="derecha">
+    <a href="{{ url_for('registro') }}">{{ macros.botonSecundario('registrarse') }}</a>
+    <a href="{{ url_for('acceso') }}">{{ macros.botonPrimario('iniciar cesion') }}</a>
+</div>
+<style>
+    header {
+        width: 100%;
+        padding: 20px 10px;
+        background: none;
+        display: grid;
+        grid-template-columns: 3fr 6fr 3fr;
+    }
+    .izquierda {
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        align-items: center;
+    }
+    .centro {
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        align-items: center;
+    }
+    .derecha {
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        align-items: center;
+    }  
+    .cuerpo {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-evenly;
+        flex-wrap: wrap;
+    }
+</style>
+{% endblock header %}
+
+{% block content %}
+    {{ macros.cartaHorizontal() }}
+    {{ macros.cartaHorizontal() }}
+    {{ macros.cartaHorizontal() }}
+    {{ macros.cartaHorizontal() }}
+{% endblock content %}

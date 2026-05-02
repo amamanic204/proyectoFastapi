@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block header %}
+<div class="boton"><a href="{{ url_for('index') }}">Atras</a></div>
+
+<style>
+    header {
+        width: 100%;
+        display: flex;
+        flex-direction: row;
+        justify-content: left;
+    }
+</style>
+{% endblock header %}
+
+{% block content %}
+    <form action="">
+        <input type="text" placeholder="nombre">
+        <input type="text" placeholder="apellidos">
+        <input type="email">
+        <input type="password" placeholder="contrasenia">
+        <input type="password" placeholder="repetir contrasenia">
+        <input type="submit" value="registrarse">
+        <p>Ya tienes una cuenta <a href="">acceder</a>.</p>
+    </form>
+    <style>
+        .cuerpo {
+            display: flex;
+            flex-direction: row;
+            justify-content: space-evenly;
+            align-items: center;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+    </style>
+{% endblock %}

@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+
+{% block header %}
+<div class="izquierda">   
+    <div class="boton"><a href="#">Cerrar cesion</a></div>
+</div>
+<div class="centro"></div>
+<div class="derecha">
+</div>
+
+<style>
+    header {
+        width: 100%;
+        display: grid;
+        grid-template-columns: auto auto auto;
+    }
+    .izquierda {
+        display: flex;
+        flex-direction: row;
+        justify-content: left;
+    }
+    .centro {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-evenly;
+    }
+    .derecha {
+        display: flex;
+        flex-direction: row;
+        justify-content: right;
+    }    
+</style>
+{% endblock header %}
+
+{% block content %}
+    <img src="https://70.img.avito.st/image/1/1.iKSI1ra6JE2-f-ZIlPDGnV11Ikc89SyPOXUmSyhzJg.9TSupauOET7TAK78OczejXWMP4LuxdqOv4b8e45u8kk" alt="">
+    <div>
+        <div class="nombre">
+            <h3>SU TIENDA AMIGA 'LUCIA'</h3>
+        </div>
+        <hr>
+        <div class="ubicacion">
+            MURILLO/LA PAZ/ Max Paredes/
+        </div>
+        <hr>
+        <div class="texto">
+            Mi whatsapp: 7878378
+            <br>
+            Mi correo: lucia@gmail.com
+            <br>
+            En instagram: @lucia.tienda
+            Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem. Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, nisi ut aliquid ex ea commodi consequatur? Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil molestiae consequatur, vel illum qui dolorem eum fugiat quo voluptas nulla pariatur?
+        </div>
+    </div>
+    <style>
+        .cuerpo {
+            padding: 20px;
+        }
+
+    </style>
+{% endblock %}

@@ -1,0 +1,265 @@
+<!-- iconos -->
+
+{% macro iconoBusqueda() -%}
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 500">
+  <path d="M 442.241 200.943 C 442.241 262.341 413.891 317.067 369.664 352.555 L 436.597 469.368 C 440.872 476.827 438.335 486.361 430.932 490.669 C 423.531 494.974 414.068 492.419 409.795 484.961 L 343.92 369.994 C 316.148 385.693 284.111 394.648 250.002 394.648 C 143.83 394.648 57.759 307.924 57.759 200.943 C 57.759 93.964 143.83 7.24 250.002 7.24 C 356.171 7.24 442.241 93.964 442.241 200.943 Z M 250.002 38.882 C 161.171 38.882 89.165 111.44 89.165 200.943 C 89.165 290.448 161.171 363.003 250.002 363.003 C 338.828 363.003 410.837 290.448 410.837 200.943 C 410.837 111.44 338.828 38.882 250.002 38.882 Z"></path>
+</svg>
+{%- endmacro %}
+
+{% macro iconoUsuario() -%}
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 500">
+  <path d="M 250 25 C 125.736 25 25 125.736 25 250 C 25 328.005 64.695 396.739 124.988 437.103 C 142.529 371.077 191.82 323.52 249.885 323.52 C 307.987 323.52 357.306 371.14 374.816 437.234 C 435.218 396.888 475 328.09 475 250 C 475 125.736 374.264 25 250 25 Z M 363.856 200.097 C 363.856 262.978 312.881 313.953 250 313.953 C 187.119 313.953 136.144 262.978 136.144 200.097 C 136.144 137.216 187.119 86.241 250 86.241 C 312.881 86.241 363.856 137.216 363.856 200.097 Z M 500 250 C 500 388.071 388.071 500 250 500 C 111.929 500 0 388.071 0 250 C 0 111.929 111.929 0 250 0 C 388.071 0 500 111.929 500 250 Z"></path>
+</svg>
+{%- endmacro %}
+
+{% macro logo() -%}
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 250">
+  <path d="M 189.69 11.628 L 239.69 11.628 L 239.69 126.628 C 239.69 190.141 188.203 241.628 124.69 241.628 C 61.177 241.628 9.69 190.141 9.69 126.628 L 9.69 11.628 L 59.69 11.628 L 59.69 126.628 C 59.69 162.527 88.791 191.628 124.69 191.628 C 160.589 191.628 189.69 162.527 189.69 126.628 L 189.69 11.628 Z" 
+    style="stroke: var(--color-oscuro); fill: var(--color-verde-la-paz); stroke-linejoin: round; stroke-width: 5px;"></path>
+  <path d="M 399.69 241.628 L 349.69 241.628 L 349.69 61.628 L 259.69 61.628 L 259.69 11.628 L 489.69 11.628 L 489.69 61.628 L 399.69 61.628 L 399.69 241.628 Z" 
+    style="stroke: var(--color-oscuro); fill: var(--color-rojo-la-paz); stroke-linejoin: round; stroke-width: 5px;"></path>
+  <path d="M 209.739 121.579 L 269.739 121.579 L 269.739 121.676 C 302.876 121.676 329.739 148.539 329.739 181.676 C 329.739 214.502 303.377 241.172 270.669 241.669 L 270.669 241.676 L 210.669 241.676 L 210.669 191.676 L 269.739 191.676 C 275.262 191.676 279.739 187.199 279.739 181.676 C 279.739 176.153 275.262 171.676 269.739 171.676 L 269.739 171.579 L 209.739 171.579 L 209.739 121.579 Z" 
+    style="stroke: var(--color-oscuro); fill: var(--color-verde-la-paz); stroke-linejoin: round; stroke-width: 5px; transform-box: fill-box; transform-origin: 50% 50%;" transform="matrix(0, -1, 1, 0, 0.000001, -0.000023)"></path>
+  <path d="M 419.69 181.628 C 419.69 187.151 424.167 191.628 429.69 191.628 C 435.213 191.628 439.69 187.151 439.69 181.628 C 439.69 176.105 435.213 171.628 429.69 171.628 C 424.167 171.628 419.69 176.105 419.69 181.628 Z M 369.69 181.628 C 369.69 148.491 396.553 121.628 429.69 121.628 C 462.828 121.628 489.688 148.491 489.688 181.628 L 489.688 241.628 L 439.69 241.628 L 439.69 240.798 C 436.438 241.344 433.097 241.628 429.69 241.628 C 396.553 241.628 369.69 214.765 369.69 181.628 Z" 
+    style="stroke: var(--color-oscuro); fill: var(--color-rojo-la-paz); stroke-linejoin: round; stroke-width: 5px;"></path>
+</svg>
+{%- endmacro %}
+
+{% macro boton(contenido) -%}
+    <button class="boton">
+        {% if contenido == 'iconoBusqueda' %}
+            {{ iconoBusqueda() }}
+        {% elif contenido == 'iconoUsuario' %}
+            {{ iconoUsuario() }}
+        {% else %}
+            {{ contenido }}
+        {% endif %}
+    </button>
+    <style>
+        .boton  {
+            margin: 0;
+            padding: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: none;
+            border: none;
+            min-width: 40px;
+            min-height: 40px;
+            background: none;
+            outline: none;
+            border-radius: 100%;
+            fill: var(--color-negro);;
+        }
+        .boton:hover{
+            background-color: var(--color-oscuro);
+            box-shadow: 2px 2px 5px var(--color-gris);
+            fill: white;
+            transition: 0.15s;
+        }
+    </style>
+{% endmacro -%}
+
+{% macro botonPrimario(contenido) -%}
+    <div class="botonPrimario">
+        {{ contenido }}
+    </div>
+    <style>
+        .botonPrimario  {
+            margin: 0 10px;
+            padding: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: none;
+            min-width: 40px;
+            min-height: 40px;
+            background: none;
+            outline: none;
+            border-radius: 10px;
+            border: 2px solid var(--color-negro);
+            background-color: var(--color-negro);
+            color: var(--color-blanco);
+        }
+        /* .botonPrimario:hover{
+            box-shadow: 2px 2px 5px var(--color-gris);
+            background-color: var(--color-blanco);
+            color: var(--color-negro);
+            transition: 0.15s;
+        } */
+    </style>
+{% endmacro -%}
+
+
+{% macro botonSecundario(contenido) -%}
+    <div class="botonSecundario">
+        {{ contenido }}
+    </div>
+    <style>
+        .botonSecundario  {
+            margin: 0 10px;
+            padding: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: none;
+            min-width: 40px;
+            min-height: 40px;
+            background: none;
+            outline: none;
+            border-radius: 10px;
+            border: 2px solid var(--color-negro);
+            background-color: var(--color-blanco);
+            color: var(--color-negro);
+        }
+        /* .botonSecundario:hover{
+            box-shadow: 2px 2px 5px var(--color-gris);
+            background-color: var(--color-negro);
+            color: var(--color-blanco);
+            transition: 0.15s;
+        } */
+    </style>
+{% endmacro -%}
+
+{% macro barraDeBusqueda() -%}
+    <div class="navegador" id="conte"> 
+        <form action="">
+            <input id="entrada" type="text">
+            {{ boton('iconoBusqueda') }}
+        </form>
+    </div>
+    <style>
+    /* navegador */
+    .navegador {
+        width: 100%;
+        padding: 10px;
+        background-color: white;
+        padding: 0 0 0 10px;
+        border: 1px solid var(--color-gris);
+        border-radius: 20px;
+        box-shadow: 1px 1px 4px var(--color-gris);
+    }
+    .navegador form {
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        align-items: center;
+    }
+    .navegador input[type="text"] {
+        width: 100%;
+        border: none;
+    }
+    .navegador input[type="text"]:focus {
+        outline: none;
+    }
+    </style>
+{% endmacro -%}
+
+{% macro cartaHorizontal() -%}
+    <div class="carta">
+        <div class="imagen-fondo">
+            <div class="imagen"> 
+                {% if productos[5].precio %}
+                <div class="precio">{{ productos[5].precio }}</div>
+                {% endif %}
+            </div>
+        </div>
+        <div class="informacion">
+            <div class="nombre">
+                <a href="">
+                    {{ productos[5].nombre }}
+                </a>
+            </div>
+            <div class="detalle">
+                {% for d in productos[5].detalle.split('\n') %}
+                    {% set x = d.split(':') %}
+                    <p><b>{{ x[0] }}:</b>{{ x[1] }}</p>
+                {% endfor %}
+                <div class="mas">
+                    <a href="">... mas</a>
+                </div>
+            </div>
+            <div class="acciones">
+                <div><a href="">guardar</a></div>
+                <div><a href="">compartir</a></div>
+            </div>
+        </div>
+    </div>
+    <style>
+        .carta {
+            width: 80%;
+            display: grid;
+            grid-template-columns: 4fr 8fr;
+            grid-auto-rows: 200px;
+            gap: 6px;
+            background-color: var(--color-blanco);
+            border: 1px solid var(--color-gris);
+            box-shadow: 0 0 5px var(--color-gris);
+            padding: 4px;
+            border-radius: 10px;
+            margin: 10px;
+        }
+        .carta .imagen-fondo {
+            border-radius: 10px;
+            background-image: url("https://cdn0.youla.io/files/images/780_780/63/1c/631c97953a91d52eaf69db51-1.jpg");
+            background-size: auto 100%;
+            background-repeat: no-repeat;
+            background-position: center;
+        }
+        .carta .imagen-fondo .imagen {
+            margin: 0;
+            width: 100%;
+            height: 100%;
+            border-radius: 10px;
+            background-image: url("https://cdn0.youla.io/files/images/780_780/63/1c/631c97953a91d52eaf69db51-1.jpg");
+            background-size: 100% auto;
+            background-repeat: no-repeat;
+            background-position: center;
+            backdrop-filter: blur(8px);
+
+            /* para acomodar el precio */
+            display: flex;
+            flex-direction: row;
+            justify-content: right;
+            align-items: end;
+        } 
+        .carta .imagen-fondo .imagen .precio {
+            font-size: 1.3em;
+            padding: 3px;
+            background-color: var(--color-dorado);
+            margin-bottom: 20px;
+        }
+        .carta .informacion {
+            padding: 8px;
+            display: grid;
+            grid-template-rows: auto auto auto;
+        }
+        .carta .informacion .nombre {
+            padding: 4px 0;
+            font-size: 1.5em;
+            font-weight: bold;
+            border-bottom: 1px solid var(--color-gris);
+        }
+        .carta .informacion .detalle {
+            padding-top: 4px;
+            padding-left: 4px;
+            position: relative;
+            overflow: hidden;
+        }
+        .carta .informacion .mas {
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            background-color: var(--color-blanco);
+            width: 100%;
+        }
+        .carta .informacion .acciones {
+            display: flex;
+            flex-direction: row;
+            justify-content: end;
+        }
+        .carta .informacion .acciones div {
+            margin: 0 4px;
+        }
+    </style>
+{% endmacro -%}
