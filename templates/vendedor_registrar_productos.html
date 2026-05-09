@@ -10,11 +10,41 @@
     header {
         width: 100%;
         display: grid;
-        grid-template-rows: auto auto;
+        grid-template-columns: auto auto auto;
     }
 </style>
 {% endblock header %}
 
+
 {% block content %}
-    
+<div class="formulario">
+    <h2>REGISTRO DE NUEVO PRODUCTO</h2>
+    <br>
+    <p>Ingrese los datos en el siguiente formato</p>
+    <p>nombre: samsung A23</p>
+    <p>marca: samsung</p>
+    <br>
+    <form action="{{ url_for('registrar_producto') }}" method="post">
+        <textarea name="entrada" id=""></textarea>
+        <button>Registrar</button>
+    </form>
+
+</div>
+<style>
+    .cuerpo {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
+    .formulario {
+        background-color: greenyellow;
+        padding: 30px;
+    }
+    textarea {
+        width: 100%;
+        height: 300px;
+        padding: 5px;
+    }
+</style>
 {% endblock %}
