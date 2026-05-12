@@ -1,0 +1,17 @@
+{% extends "vendedor_base.html" %}
+
+{% block principal %}
+
+    <div class="bloque-negocio">
+        <div class="info-negocio">
+            <p class="adicionar-mensaje">
+                No encuentras el producto? <a href="{{ url_for('vendedor_registrar_productos', vendedor_id=vendedor_id) }}"><b>Registralo ahora</b></a>
+            </p>
+        </div>
+    </div>
+
+    {% for producto in productos %}
+        {{ macros.cartaHorizontalVendedor(producto) }}
+    {% endfor %}
+
+{% endblock %}

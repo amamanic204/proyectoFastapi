@@ -1,38 +1,118 @@
 {% extends "base.html" %}
 
 {% block header %}
-<div class="boton"><a href="{{ url_for('index') }}">Atras</a></div>
-
+<div class="header-logo">
+    <div style="width:70px;">{{ macros.logo() }}</div>
+</div>
 <style>
     header {
         width: 100%;
-        display: flex;
-        flex-direction: row;
-        justify-content: left;
+        padding: 10px 16px;
+        border-bottom: 1px solid #ddd;
+        background: var(--color-blanco);
+    }
+    .header-logo {
+        width: 80px;
     }
 </style>
 {% endblock header %}
 
 {% block content %}
-    <form action="{{ url_for('vendedor_negocio') }}">
-        <label for="email">Correo electrónico: </label>
-        <input type="email" id="email" name="correo">
-        <input type="password">
-        <input type="submit" value="acceder">
-        <p>Ovlidaste tu contrasenia? <a href="#">Cambiar contrasenia</a>.</p>
-        <p>No tienes una cuenta? <a href="{{ url_for('registro') }}">registrate</a>.</p>
-    </form>
-    <style>
-        .cuerpo {
-            display: flex;
-            flex-direction: row;
-            justify-content: space-evenly;
-            align-items: center;
-        }
-        form {
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-        }
-    </style>
+<div class="acceso-cuerpo">
+    <div class="acceso-card">
+        <h2 class="acceso-titulo">Iniciar Cesion</h2>
+
+        <form action="{{ url_for('vendedor_negocio') }}">
+            <div class="campo">
+                <label for="celular">Nro cel:</label>
+                <input type="text" id="celular" name="celular">
+            </div>
+            <div class="campo">
+                <label for="contrasena">contrasena:</label>
+                <input type="password" id="contrasena" name="contrasena">
+            </div>
+            <button type="submit" class="btn-acceder">Iniciar Cesion</button>
+            <p class="acceso-pie">No tienes cuenta? <a href="{{ url_for('registro') }}">Crear una</a></p>
+        </form>
+    </div>
+</div>
+
+<style>
+    .cuerpo {
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        align-items: center;
+        min-height: 80vh;
+        background: var(--color-blanco);
+    }
+    .acceso-card {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        border: 1px solid #ccc;
+        border-radius: 16px;
+        padding: 36px 48px;
+        background: var(--color-blanco);
+        min-width: 340px;
+    }
+    .acceso-titulo {
+        font-size: 16px;
+        font-weight: bold;
+        color: var(--color-negro);
+        margin-bottom: 24px;
+    }
+    .acceso-card form {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 14px;
+    }
+    .campo {
+        width: 100%;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: flex-end;
+        gap: 10px;
+    }
+    .campo label {
+        font-size: 13px;
+        color: var(--color-oscuro);
+        white-space: nowrap;
+    }
+    .campo input {
+        border: 1px solid #bbb;
+        border-radius: 8px;
+        padding: 6px 10px;
+        font-size: 13px;
+        width: 200px;
+        outline: none;
+    }
+    .campo input:focus {
+        border-color: var(--color-negro);
+    }
+    .btn-acceder {
+        margin-top: 8px;
+        padding: 8px 28px;
+        background: var(--color-negro);
+        color: var(--color-blanco);
+        border: none;
+        border-radius: 8px;
+        font-size: 13px;
+        cursor: pointer;
+    }
+    .btn-acceder:hover {
+        background: var(--color-oscuro);
+    }
+    .acceso-pie {
+        font-size: 13px;
+        color: var(--color-oscuro);
+        margin-top: 4px;
+    }
+    .acceso-pie a {
+        color: var(--color-negro);
+    }
+</style>
 {% endblock %}

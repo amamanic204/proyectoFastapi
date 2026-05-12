@@ -1,0 +1,15 @@
+{% extends "vendedor_base.html" %}
+
+{% block principal %}
+
+    <div class="bloque-negocio">
+        <div class="info-negocio">
+            <p>Nombre: {{ vendedor.vendedor_nombre }}</p>
+            <p>Apellido: {{ vendedor.vendedor_apellido }}</p>
+            <p>Correo: {{ vendedor.vendedor_correo }}</p>
+            <p>Celular: {{ vendedor.vendedor_celular }}</p>
+            <p>Contraseña: {{ vendedor.vendedor_contrasena }} <button></button></p>
+        </div>
+    </div>
+
+{% endblock %}

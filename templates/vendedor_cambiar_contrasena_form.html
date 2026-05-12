@@ -1,0 +1,102 @@
+{% extends "base.html" %}
+
+{% block header %}
+<div class="boton"><a href="{{ url_for('index') }}">Atras</a></div>
+
+<style>
+    header {
+        width: 100%;
+        display: flex;
+        flex-direction: row;
+        justify-content: left;
+    }
+</style>
+{% endblock header %}
+
+{% block content %}
+    <form method="post" action="{{ url_for('vendedor_cambiar_contrasena', vendedor_id=vendedor_id) }}">
+        <h3>Combio de Contraseña</h3>
+        <label for="contrasena_antigua">Contraseña Acutal: </label>
+        <input type="text" id="contrasena_antigua" name="contrasena_antigua">
+        <label for="contrasena_nueva">Nueva Contraseña: </label>
+        <input type="text" id="contrasena_nueva" name="contrasena_nueva">
+        <button>Cambiar Contraseña</button>
+    </form>
+        
+    <style>
+        /* Fondo */
+    .cuerpo {
+        font-family: Arial, sans-serif;
+        background-color: #ffffff;
+        margin: 0;
+        height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    /* Formulario */
+    form {
+        background-color: #ffffff;
+        padding: 10px 20px;
+        border-radius: 12px;
+        border: 2px solid black;
+        width: 380px;
+    }
+    form h3 {
+        text-align: center;
+        margin-bottom: 10px;
+        padding-top:0;
+        margin-top:10;
+    }
+    /* Labels */
+    form label {
+        display: inline-block;
+        width: 170px; /* más ancho por textos largos */
+        margin-bottom: 10px;
+        text-align: end;
+    }
+
+    /* Inputs */
+    form input[type="text"],
+    form input[type="email"],
+    form input[type="password"] {
+        width: 200px;
+        padding: 6px;
+        border: 1px solid black;
+        border-radius: 6px;
+        margin-bottom: 10px;
+        display: inline-block;
+    }
+
+    /* Botón */
+    form input[type="submit"] {
+        display: block;
+        margin: 20px auto;
+        padding: 10px;
+        width: 60%;
+        background-color: black;
+        color: white;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+    }
+
+    form input[type="submit"]:hover {
+        background-color: #333;
+    }
+
+    /* Texto */
+    form p {
+        text-align: center;
+        font-size: 14px;
+        margin: 10px 0;
+    }
+
+    /* Links */
+    form a {
+        color: black;
+        text-decoration: underline;
+    }
+    </style>
+{% endblock %}

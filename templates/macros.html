@@ -123,8 +123,8 @@
 
 {% macro barraDeBusqueda() -%}
     <div class="navegador" id="conte"> 
-        <form method="get" action="">
-            <input id="entrada" type="text">
+        <form method="get" action="{{ url_for('buscar') }}" id="formBusqueda">
+            <input id="entrada" type="text" name="busqueda" value="{{ busqueda }}">
             {{ boton('iconoBusqueda') }}
         </form>
     </div>
@@ -133,11 +133,10 @@
     .navegador {
         width: 100%;
         padding: 10px;
-        background-color: white;
+        background-color: #8a8a8a10;
         padding: 0 0 0 10px;
         border: 1px solid var(--color-gris);
         border-radius: 20px;
-        box-shadow: 1px 1px 4px var(--color-gris);
     }
     .navegador form {
         display: flex;
@@ -148,6 +147,7 @@
     .navegador input[type="text"] {
         width: 100%;
         border: none;
+        background-color: rgb(0, 0, 0, 0);
     }
     .navegador input[type="text"]:focus {
         outline: none;
@@ -155,33 +155,69 @@
     </style>
 {% endmacro -%}
 
-{% macro cartaHorizontal() -%}
+
+{% macro barraDeBusquedaVendedor() -%}
+    <div class="navegador" id="conte"> 
+        <form method="get" action="{{ url_for('vendedor_buscar', vendedor_id=vendedor_id) }}" id="formBusqueda">
+            <input id="entrada" type="text" name="busqueda" value="{{ busqueda }}">
+            {{ boton('iconoBusqueda') }}
+        </form>
+    </div>
+    <style>
+    /* navegador */
+    .navegador {
+        width: 100%;
+        padding: 10px;
+        background-color: #8a8a8a10;
+        padding: 0 0 0 10px;
+        border: 1px solid var(--color-gris);
+        border-radius: 20px;
+    }
+    .navegador form {
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        align-items: center;
+    }
+    .navegador input[type="text"] {
+        width: 100%;
+        border: none;
+        background-color: rgb(0, 0, 0, 0);
+    }
+    .navegador input[type="text"]:focus {
+        outline: none;
+    }
+    </style>
+{% endmacro -%}
+
+{% macro cartaHorizontal(producto) -%}
     <div class="carta">
         <div class="imagen-fondo">
             <div class="imagen"> 
-                {% if productos[0].producto_precio %}
-                <div class="precio">{{ productos[0].precio }}</div>
+                {% if producto.producto_precio %}
+                <div class="precio">{{ producto.producto_precio }}</div>
                 {% endif %}
             </div>
         </div>
         <div class="informacion">
             <div class="nombre">
                 <a href="">
-                    {{ productos[0].prodcuto_nombre }}
+                    {{ producto.producto_nombre }}
                 </a>
             </div>
             <div class="detalle">
-                {% for d in productos[0].producto_detalle.split('\n') %}
+                {% if producto.producto_detalle %}
+                {% for d in producto.producto_detalle.split('\n') %}
                     {% set x = d.split(':') %}
                     <p><b>{{ x[0] }}:</b>{{ x[1] }}</p>
                 {% endfor %}
                 <div class="mas">
                     <a href="">... mas</a>
                 </div>
+                {% endif %}
             </div>
             <div class="acciones">
-                <div><a href="">guardar</a></div>
-                <div><a href="">compartir</a></div>
+                <div><a href="{{ url_for('buscar_producto', producto_id=producto.producto_id) }}">Ver Tiendas</a></div>
             </div>
         </div>
     </div>
@@ -197,7 +233,7 @@
             box-shadow: 0 0 5px var(--color-gris);
             padding: 4px;
             border-radius: 10px;
-            margin: 10px;
+            margin: 10px auto;
         }
         .carta .imagen-fondo {
             border-radius: 10px;
@@ -232,7 +268,219 @@
         .carta .informacion {
             padding: 8px;
             display: grid;
-            grid-template-rows: auto auto auto;
+            grid-template-rows: 2.5em auto 1em;
+        }
+        .carta .informacion .nombre {
+            padding: 4px 0;
+            font-size: 1.5em;
+            font-weight: bold;
+            border-bottom: 1px solid var(--color-gris);
+        }
+        .carta .informacion .detalle {
+            padding-top: 4px;
+            padding-left: 4px;
+            position: relative;
+            overflow: hidden;
+        }
+        .carta .informacion .mas {
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            background-color: var(--color-blanco);
+            width: 100%;
+        }
+        .carta .informacion .acciones {
+            display: flex;
+            flex-direction: row;
+            justify-content: end;
+        }
+        .carta .informacion .acciones div {
+            margin: 0 4px;
+        }
+    </style>
+{% endmacro -%}
+
+{% macro cartaHorizontalVendedor(producto) -%}
+    <div class="carta">
+        <div class="imagen-fondo">
+            <div class="imagen"> 
+                {% if producto.producto_precio %}
+                <div class="precio">{{ producto.producto_precio }}</div>
+                {% endif %}
+            </div>
+        </div>
+        <div class="informacion">
+            <div class="nombre">
+                <a href="">
+                    {{ producto.producto_nombre }}
+                </a>
+            </div>
+            <div class="detalle">
+                {% if producto.producto_detalle %}
+                {% for d in producto.producto_detalle.split('\n') %}
+                    {% set x = d.split(':') %}
+                    <p><b>{{ x[0] }}:</b>{{ x[1] }}</p>
+                {% endfor %}
+                <div class="mas">
+                    <a href="">... mas</a>
+                </div>
+                {% endif %}
+            </div>
+            <div class="acciones">
+                <div><a href="">Adicionar</a></div>
+                <div><a href="">Editar</a></div>
+                <div><a href="">Precio</a></div>
+            </div>
+        </div>
+    </div>
+    <style>
+        .carta {
+            width: 80%;
+            display: grid;
+            grid-template-columns: 4fr 8fr;
+            grid-auto-rows: 200px;
+            gap: 6px;
+            background-color: var(--color-blanco);
+            border: 1px solid var(--color-gris);
+            box-shadow: 0 0 5px var(--color-gris);
+            padding: 4px;
+            border-radius: 10px;
+            margin: 10px auto;
+        }
+        .carta .imagen-fondo {
+            border-radius: 10px;
+            background-image: url("https://cdn0.youla.io/files/images/780_780/63/1c/631c97953a91d52eaf69db51-1.jpg");
+            background-size: auto 100%;
+            background-repeat: no-repeat;
+            background-position: center;
+        }
+        .carta .imagen-fondo .imagen {
+            margin: 0;
+            width: 100%;
+            height: 100%;
+            border-radius: 10px;
+            background-image: url("https://cdn0.youla.io/files/images/780_780/63/1c/631c97953a91d52eaf69db51-1.jpg");
+            background-size: 100% auto;
+            background-repeat: no-repeat;
+            background-position: center;
+            backdrop-filter: blur(8px);
+
+            /* para acomodar el precio */
+            display: flex;
+            flex-direction: row;
+            justify-content: right;
+            align-items: end;
+        } 
+        .carta .imagen-fondo .imagen .precio {
+            font-size: 1.3em;
+            padding: 3px;
+            background-color: var(--color-dorado);
+            margin-bottom: 20px;
+        }
+        .carta .informacion {
+            padding: 8px;
+            display: grid;
+            grid-template-rows: 2.5em auto 1em;
+        }
+        .carta .informacion .nombre {
+            padding: 4px 0;
+            font-size: 1.5em;
+            font-weight: bold;
+            border-bottom: 1px solid var(--color-gris);
+        }
+        .carta .informacion .detalle {
+            padding-top: 4px;
+            padding-left: 4px;
+            position: relative;
+            overflow: hidden;
+        }
+        .carta .informacion .mas {
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            background-color: var(--color-blanco);
+            width: 100%;
+        }
+        .carta .informacion .acciones {
+            display: flex;
+            flex-direction: row;
+            justify-content: end;
+        }
+        .carta .informacion .acciones div {
+            margin: 0 4px;
+        }
+    </style>
+{% endmacro -%}
+
+{% macro cartaHorizontalNegocio(negocio) -%}
+    <div class="carta-negocio">
+        <div class="informacion">
+            <div class="nombre">
+                <a href="">
+                    {{ negocio.negocio_nombre }}
+                </a>
+            </div>
+            <p class="ubicacion">{{ negocio.negocio_municipio }}/{{ negocio.negocio_zona }}/{{ negocio.negocio_direccion }}</p>
+            <div class="detalle">
+                {% if negocio.negocio_descripcion %}
+                {% for linea in negocio.negocio_descripcion.split('\n') %}
+                    <p>{{ linea }}</p>
+                {% endfor %}
+                {% endif %}
+            </div>
+            <div class="acciones">
+                <div><a href="{{ url_for('negocio', negocio_id=negocio.negocio_id) }}">Más Información</a></div>
+            </div>
+        </div>
+    </div>
+    <style>
+        .carta {
+            width: 80%;
+            display: grid;
+            grid-template-columns: 4fr 8fr;
+            grid-auto-rows: 200px;
+            gap: 6px;
+            background-color: var(--color-blanco);
+            border: 1px solid var(--color-gris);
+            box-shadow: 0 0 5px var(--color-gris);
+            padding: 4px;
+            border-radius: 10px;
+            margin: 10px auto;
+        }
+        .carta .imagen-fondo {
+            border-radius: 10px;
+            background-image: url("https://cdn0.youla.io/files/images/780_780/63/1c/631c97953a91d52eaf69db51-1.jpg");
+            background-size: auto 100%;
+            background-repeat: no-repeat;
+            background-position: center;
+        }
+        .carta .imagen-fondo .imagen {
+            margin: 0;
+            width: 100%;
+            height: 100%;
+            border-radius: 10px;
+            background-image: url("https://cdn0.youla.io/files/images/780_780/63/1c/631c97953a91d52eaf69db51-1.jpg");
+            background-size: 100% auto;
+            background-repeat: no-repeat;
+            background-position: center;
+            backdrop-filter: blur(8px);
+
+            /* para acomodar el precio */
+            display: flex;
+            flex-direction: row;
+            justify-content: right;
+            align-items: end;
+        } 
+        .carta .imagen-fondo .imagen .precio {
+            font-size: 1.3em;
+            padding: 3px;
+            background-color: var(--color-dorado);
+            margin-bottom: 20px;
+        }
+        .carta .informacion {
+            padding: 8px;
+            display: grid;
+            grid-template-rows: 2.5em auto 1em;
         }
         .carta .informacion .nombre {
             padding: 4px 0;
@@ -378,6 +626,346 @@
         }
         .cv-btn-modificar:hover {
             background: #f0f0f0;
+        }
+    </style>
+{%- endmacro %}
+
+
+{% macro cartaPublica(producto) -%}
+    <div class="cp-carta">
+        <div class="cp-imagen-fondo">
+            <div class="cp-imagen">
+                {% if producto.producto_precio %}
+                <div class="cp-precio">{{ producto.producto_precio }}</div>
+                {% endif %}
+            </div>
+        </div>
+        <div class="cp-informacion">
+            <div class="cp-nombre">
+                <a href="">{{ producto.producto_nombre }}</a>
+            </div>
+            <div class="cp-detalle">
+                {% for d in producto.producto_detalle.split('\n') %}
+                    {% set x = d.split(':') %}
+                    {% if x|length >= 2 and x[0].strip() %}
+                    <p><b>{{ x[0].strip() }}:</b> {{ x[1].strip() }}</p>
+                    {% endif %}
+                {% endfor %}
+                <div class="cp-mas">
+                    <a href="">... ver mas</a>
+                </div>
+            </div>
+            <div class="cp-acciones">
+                <div><a href="">guardar</a></div>
+                <div><a href="">compartir</a></div>
+            </div>
+        </div>
+    </div>
+    <style>
+        .cp-carta {
+            width: 100%;
+            display: grid;
+            grid-template-columns: 4fr 8fr;
+            grid-auto-rows: 200px;
+            gap: 6px;
+            background-color: var(--color-blanco);
+            border: 1px solid var(--color-gris);
+            box-shadow: 0 0 5px var(--color-gris);
+            padding: 4px;
+            border-radius: 10px;
+            margin: 10px 0;
+        }
+        .cp-imagen-fondo {
+            border-radius: 10px;
+            background-image: url("https://cdn0.youla.io/files/images/780_780/63/1c/631c97953a91d52eaf69db51-1.jpg");
+            background-size: auto 100%;
+            background-repeat: no-repeat;
+            background-position: center;
+        }
+        .cp-imagen {
+            width: 100%;
+            height: 100%;
+            border-radius: 10px;
+            background-image: url("https://cdn0.youla.io/files/images/780_780/63/1c/631c97953a91d52eaf69db51-1.jpg");
+            background-size: 100% auto;
+            background-repeat: no-repeat;
+            background-position: center;
+            backdrop-filter: blur(8px);
+            display: flex;
+            flex-direction: row;
+            justify-content: right;
+            align-items: end;
+        }
+        .cp-precio {
+            font-size: 1.3em;
+            padding: 3px;
+            background-color: var(--color-dorado);
+            margin-bottom: 20px;
+        }
+        .cp-informacion {
+            padding: 8px;
+            display: grid;
+            grid-template-rows: auto auto auto;
+        }
+        .cp-nombre {
+            padding: 4px 0;
+            font-size: 1.5em;
+            font-weight: bold;
+            border-bottom: 1px solid var(--color-gris);
+        }
+        .cp-detalle {
+            padding-top: 4px;
+            padding-left: 4px;
+            position: relative;
+            overflow: hidden;
+        }
+        .cp-mas {
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            background-color: var(--color-blanco);
+            width: 100%;
+        }
+        .cp-acciones {
+            display: flex;
+            flex-direction: row;
+            justify-content: end;
+            gap: 8px;
+        }
+        .cp-acciones div a {
+            text-decoration: none;
+            color: var(--color-oscuro);
+            font-size: 12px;
+        }
+    </style>
+{%- endmacro %}
+
+{% macro cartaVendedor(producto) -%}
+    <div class="carta-vendedor">
+        <div class="cv-imagen-fondo">
+            <div class="cv-imagen">
+                {% if producto.producto_precio %}
+                <div class="cv-precio">{{ producto.producto_precio }}</div>
+                {% endif %}
+            </div>
+        </div>
+        <div class="cv-informacion">
+            <div class="cv-nombre">
+                <a href="">{{ producto.producto_nombre }}</a>
+            </div>
+            <div class="cv-detalle">
+                {% for d in producto.producto_detalle.split('\n') %}
+                    {% set x = d.split(':') %}
+                    {% if x|length >= 2 and x[0].strip() %}
+                    <p><b>{{ x[0].strip() }}:</b> {{ x[1].strip() }}</p>
+                    {% endif %}
+                {% endfor %}
+                <div class="cv-mas">
+                    <a href="">... mas</a>
+                </div>
+            </div>
+            <div class="cv-acciones">
+                <a href="#" class="cv-btn-modificar">Modificar Producto</a>
+            </div>
+        </div>
+    </div>
+    <style>
+        .carta-vendedor {
+            width: 100%;
+            display: grid;
+            grid-template-columns: 4fr 8fr;
+            grid-auto-rows: 200px;
+            gap: 6px;
+            background-color: var(--color-blanco);
+            border: 1px solid var(--color-gris);
+            box-shadow: 0 0 5px var(--color-gris);
+            padding: 4px;
+            border-radius: 10px;
+            margin: 10px 0;
+        }
+        .cv-imagen-fondo {
+            border-radius: 10px;
+            background-image: url("https://cdn0.youla.io/files/images/780_780/63/1c/631c97953a91d52eaf69db51-1.jpg");
+            background-size: auto 100%;
+            background-repeat: no-repeat;
+            background-position: center;
+        }
+        .cv-imagen {
+            margin: 0;
+            width: 100%;
+            height: 100%;
+            border-radius: 10px;
+            background-image: url("https://cdn0.youla.io/files/images/780_780/63/1c/631c97953a91d52eaf69db51-1.jpg");
+            background-size: 100% auto;
+            background-repeat: no-repeat;
+            background-position: center;
+            backdrop-filter: blur(8px);
+            display: flex;
+            flex-direction: row;
+            justify-content: right;
+            align-items: end;
+        }
+        .cv-precio {
+            font-size: 1.3em;
+            padding: 3px;
+            background-color: var(--color-dorado);
+            margin-bottom: 20px;
+        }
+        .cv-informacion {
+            padding: 8px;
+            display: grid;
+            grid-template-rows: auto auto auto;
+        }
+        .cv-nombre {
+            padding: 4px 0;
+            font-size: 1.5em;
+            font-weight: bold;
+            border-bottom: 1px solid var(--color-gris);
+        }
+        .cv-detalle {
+            padding-top: 4px;
+            padding-left: 4px;
+            position: relative;
+            overflow: hidden;
+        }
+        .cv-mas {
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            background-color: var(--color-blanco);
+            width: 100%;
+        }
+        .cv-acciones {
+            display: flex;
+            flex-direction: row;
+            justify-content: end;
+            align-items: center;
+        }
+        .cv-btn-modificar {
+            padding: 4px 12px;
+            border: 1px solid var(--color-gris);
+            border-radius: 6px;
+            background: var(--color-blanco);
+            color: var(--color-negro);
+            text-decoration: none;
+            font-size: 12px;
+        }
+        .cv-btn-modificar:hover {
+            background: #f0f0f0;
+        }
+    </style>
+{%- endmacro %}
+{% macro cartaAdicionar(producto) -%}
+    <div class="ca-carta">
+        <div class="ca-imagen-fondo">
+            <div class="ca-imagen">
+                {% if producto.producto_precio %}
+                <div class="ca-precio">{{ producto.producto_precio }}</div>
+                {% endif %}
+            </div>
+        </div>
+        <div class="ca-informacion">
+            <div class="ca-nombre">
+                <a href="">{{ producto.producto_nombre }}</a>
+            </div>
+            <div class="ca-detalle">
+                {% for d in producto.producto_detalle.split('\n') %}
+                    {% set x = d.split(':') %}
+                    {% if x|length >= 2 and x[0].strip() %}
+                    <p><b>{{ x[0].strip() }}:</b> {{ x[1].strip() }}</p>
+                    {% endif %}
+                {% endfor %}
+                <div class="ca-mas">
+                    <a href="">... mas</a>
+                </div>
+            </div>
+            <div class="ca-acciones">
+                <a href="#" class="ca-btn-adicionar">+ Agregar a la Tienda</a>
+            </div>
+        </div>
+    </div>
+    <style>
+        .ca-carta {
+            width: 100%;
+            display: grid;
+            grid-template-columns: 4fr 8fr;
+            grid-auto-rows: 200px;
+            gap: 6px;
+            background-color: var(--color-blanco);
+            border: 1px solid var(--color-gris);
+            box-shadow: 0 0 5px var(--color-gris);
+            padding: 4px;
+            border-radius: 10px;
+            margin: 10px 0;
+        }
+        .ca-imagen-fondo {
+            border-radius: 10px;
+            background-image: url("https://cdn0.youla.io/files/images/780_780/63/1c/631c97953a91d52eaf69db51-1.jpg");
+            background-size: auto 100%;
+            background-repeat: no-repeat;
+            background-position: center;
+        }
+        .ca-imagen {
+            width: 100%;
+            height: 100%;
+            border-radius: 10px;
+            background-image: url("https://cdn0.youla.io/files/images/780_780/63/1c/631c97953a91d52eaf69db51-1.jpg");
+            background-size: 100% auto;
+            background-repeat: no-repeat;
+            background-position: center;
+            backdrop-filter: blur(8px);
+            display: flex;
+            flex-direction: row;
+            justify-content: right;
+            align-items: end;
+        }
+        .ca-precio {
+            font-size: 1.3em;
+            padding: 3px;
+            background-color: var(--color-dorado);
+            margin-bottom: 20px;
+        }
+        .ca-informacion {
+            padding: 8px;
+            display: grid;
+            grid-template-rows: auto auto auto;
+        }
+        .ca-nombre {
+            padding: 4px 0;
+            font-size: 1.5em;
+            font-weight: bold;
+            border-bottom: 1px solid var(--color-gris);
+        }
+        .ca-detalle {
+            padding-top: 4px;
+            padding-left: 4px;
+            position: relative;
+            overflow: hidden;
+        }
+        .ca-mas {
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            background-color: var(--color-blanco);
+            width: 100%;
+        }
+        .ca-acciones {
+            display: flex;
+            flex-direction: row;
+            justify-content: end;
+            align-items: center;
+        }
+        .ca-btn-adicionar {
+            padding: 4px 14px;
+            border: none;
+            border-radius: 6px;
+            background: var(--color-negro);
+            color: var(--color-blanco);
+            text-decoration: none;
+            font-size: 12px;
+        }
+        .ca-btn-adicionar:hover {
+            background: var(--color-oscuro);
         }
     </style>
 {%- endmacro %}

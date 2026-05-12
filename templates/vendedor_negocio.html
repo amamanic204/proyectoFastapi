@@ -1,47 +1,19 @@
-{% extends "base.html" %}
+{% extends "vendedor_base.html" %}
 
-{% block header %}
-<div class="header-logo">
-    {{ macros.logo() }}
-</div>
-<style>
-    header {
-        width: 100%;
-        padding: 10px 16px;
-        border-bottom: 1px solid #ddd;
-        background: var(--color-blanco);
-    }
-    .header-logo {
-        width: 80px;
-    }
-</style>
-{% endblock header %}
-
-{% block content %}
-<div class="layout">
-    <aside class="sidebar">
-        <nav class="sidebar-nav">
-            <a><div class="sidebar-seccion">Información</div></a>
-            <a href="#" class="nav-item activo">Mi negocio</a>
-            <a href="#" class="nav-item">Mis datos</a>
-        </nav>
-
-        <div class="sidebar-seccion">Ajustes</div>
-        <nav class="sidebar-nav">
-            <div class="nav-item visibilidad">
-                Visible: <a href="#">on</a> | <a href="#">off</a>
-            </div>
-            <a href="#" class="nav-item">Cambiar contraseña</a>
-            <a href="#" class="nav-item">Cambiar numero</a>
-            <a href="#" class="nav-item">Eliminar cuenta</a>
-            <a href="#" class="nav-item">Salir</a>
-        </nav>
-    </aside>
-
-    <main class="contenido">
-
+{% block principal %}
         <div class="fila-titulo">
-            <h1 class="titulo">Tienda: TechMasters</h1>
+            <div>Visible:
+                <form method="get" action="{{ url_for('negocio_cambiar_visibilidad', negocio_id=negocio.vendedor_id) }}">
+                    {% if negocio.negocio_visible %}
+                        <button>SI</button>
+                    {% else %}
+                        <button>NO</button>
+                    {% endif %}
+                </form>
+            </div>
+        </div>
+        <div class="fila-titulo">
+            <h1 class="titulo">{{ negocio.negocio_nombre }}</h1>
             <button class="btn-editar" title="Editar nombre">
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
@@ -52,7 +24,7 @@
         <hr class="separador">
 
         <div class="fila-titulo">
-            <p class="ubicacion">La Paz/Zona Max Paredes/edif. 21 century entre calles X y Y</p>
+            <p class="ubicacion">{{ negocio.negocio_municipio }}/{{ negocio.negocio_zona }}/{{ negocio.negocio_direccion }}</p>
             <button class="btn-editar" title="Editar ubicacion">
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
@@ -73,13 +45,10 @@
                 </button>
             </div>
             <div class="info-negocio">
-                <p>Whatsapp: 77665544</p>
-                <p>Email: <a href="mailto:techM@gmail.com">techM@gmail.com</a></p>
                 <p class="descripcion">
-                    La tienda TechMasters cuenta con 10 años de experiencia en la consultoria de dispositivos moviles.
-                    Los productos de punta siempre se encuentran en TechMasters.
-                    Se ofrece entrega por domicilio, pero incluye costo adicional.
-                    Se puede pagar con cheque.
+                    {% for linea in negocio.negocio_descripcion.split('\n') %}
+                        <p>{{ linea }}</p>
+                    {% endfor %}
                 </p>
                 <div class="fila-editar-info">
                     <button class="btn-editar" title="Editar informacion">
@@ -92,215 +61,4 @@
             </div>
         </div>
 
-        <!-- SECCIÓN PRODUCTOS -->
-        {% set productos = [
-            {"nombre": "iPhone 14", "precio": "Bs 100", "detalle": "Modelo: iPhone 14\nMarca: Apple\nFecha de lanzamiento: 7 de septiembre de 2022\nSistema operativo: iOS 16"},
-            {"nombre": "Samsung S20", "precio": "Bs 80", "detalle": "Modelo: Samsung S20\nMarca: Samsung\nFecha de lanzamiento: 2020\nSistema operativo: Android 10"},
-            {"nombre": "Xiaomi 12", "precio": "Bs 60", "detalle": "Modelo: Xiaomi 12\nMarca: Xiaomi\nFecha de lanzamiento: 2022\nSistema operativo: Android 12"}
-        ] %}
-        <div class="productos-header">
-            <h2 class="productos-titulo">Productos</h2>
-            <div class="productos-acciones">
-                <a href="{{ url_for('vendedor_registrar_productos') }}" class="btn-registrar">+ Registrar Productos</a>
-                <a href="{{ url_for('vendedor_adicionar_productos') }}" class="btn-adicionar">+ Adicionar Productos</a>
-            </div>
-        </div>
-
-        <div class="productos-lista">
-            {% for producto in productos %}
-                {{ macros.cartaVendedor(producto) }}
-            {% endfor %}
-        </div>
-
-    </main>
-</div>
-
-<style>
-    .layout {
-        width: 90%;
-        min-height: 100vh;
-        display: grid;
-        grid-template-columns: 160px 1fr;
-        margin: 0 auto;
-    }
-
-    .sidebar {
-        border-right: 1px solid #ddd;
-        background: var(--color-blanco);
-        padding: 12px 0;
-        display: flex;
-        flex-direction: column;
-        gap: 4px;
-    }
-    .sidebar-seccion {
-        padding: 12px 16px 4px;
-        font-size: 12px;
-        color: var(--color-gris);
-    }
-    .sidebar-nav {
-        display: flex;
-        flex-direction: column;
-    }
-    .nav-item {
-        padding: 6px 16px;
-        font-size: 13px;
-        color: var(--color-oscuro);
-        text-decoration: none;
-        transition: background-color 0.15s;
-    }
-    .nav-item:hover {
-        background-color: #ebebeb;
-    }
-    .nav-item.activo {
-        background-color: #d4d4d4;
-        font-weight: bold;
-    }
-    .nav-item.visibilidad a {
-        color: var(--color-oscuro);
-        text-decoration: none;
-    }
-
-    .contenido {
-        padding: 24px 28px;
-        background: var(--color-humo-blanco);
-    }
-    .fila-titulo {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        margin-bottom: 4px;
-    }
-    .titulo {
-        font-size: 50px;        
-        font-weight: bold;
-        color: var(--color-negro);
-        margin: 0;
-    }
-    .ubicacion {
-        font-size: 20px;
-        color: var(--color-oscuro);
-        margin: 0;
-    }
-    .separador {
-        border: none;
-        border-top: 1px dashed #aaa;
-        margin: 6px 0 12px;
-    }
-    .btn-editar {
-        background: none;
-        border: none;
-        cursor: pointer;
-        padding: 4px;
-        color: var(--color-oscuro);
-        display: flex;
-        align-items: center;
-        border-radius: 4px;
-    }
-    .btn-editar:hover {
-        background: #e0e0e0;
-    }
-
-    .bloque-negocio {
-        display: grid;
-        grid-template-columns: 2fr 3fr;
-        border: 1px solid #ccc;
-        border-radius: 4px;
-        overflow: hidden;
-        background: var(--color-blanco);
-    }
-    .imagen-negocio {
-        position: relative;
-        min-height: 140px;
-        max-height: 300px;
-    }
-    .imagen-negocio img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        display: block;
-    }
-    .btn-imagen {
-        position: absolute;
-        bottom: 8px;
-        right: 8px;
-        background: rgba(255,255,255,0.85);
-        border: 1px solid #ccc;
-        border-radius: 6px;
-        padding: 5px 7px;
-        cursor: pointer;
-        display: flex;
-        align-items: center;
-    }
-    .btn-imagen:hover {
-        background: white;
-    }
-    .info-negocio {
-        padding: 20px 50px;
-        font-size: 13px;
-        color: var(--color-oscuro);
-        display: flex;
-        flex-direction: column;
-        gap: 3px;
-        position: relative;
-    }
-    .info-negocio p {
-        margin: 0;
-        line-height: 1.5;
-    }
-    .info-negocio a {
-        color: #185fa5;
-    }
-    .descripcion {
-        margin-top: 6px !important;
-        color: var(--color-gris);
-        font-size: 14px;
-        line-height: 1.6 !important;
-    }
-    .fila-editar-info {
-        display: flex;
-        justify-content: flex-end;
-        margin-top: auto;
-        padding-top: 8px;
-    }
-
-    .productos-header {
-        display: flex;
-        flex-direction: row;
-        align-items: center;
-        justify-content: space-between;
-        margin-top: 20px;
-        margin-bottom: 10px;
-    }
-    .productos-titulo {
-        font-size: 25px;
-        font-weight: bold;
-        color: var(--color-negro);
-    }
-    .productos-acciones {
-        display: flex;
-        gap: 8px;
-    }
-    .btn-registrar {
-        padding: 5px 12px;
-        border: 1px solid var(--color-negro);
-        border-radius: 6px;
-        background: var(--color-blanco);
-        color: var(--color-negro);
-        text-decoration: none;
-        font-size: 13px;
-    }
-    .btn-adicionar {
-        padding: 5px 12px;
-        border: none;
-        border-radius: 6px;
-        background: var(--color-negro);
-        color: var(--color-blanco);
-        text-decoration: none;
-        font-size: 13px;
-    }
-    .productos-lista {
-        display: flex;
-        flex-direction: column;
-    }
-</style>
 {% endblock %}

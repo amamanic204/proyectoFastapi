@@ -1,60 +1,60 @@
 {% extends "base.html" %}
 
 {% block header %}
-<div class="header-logo">
-    {{ macros.logo() }}
+<div class="izquierda">
+    <div style="width:70px;">{{ macros.logo() }}</div>
+</div>
+<div class="centro">
+    {{ macros.barraDeBusquedaVendedor() }}
+</div>
+<div class="derecha">
 </div>
 <style>
     header {
         width: 100%;
-        padding: 10px 16px;
-        border-bottom: 1px solid #ddd;
-        background: var(--color-blanco);
+        padding: 20px 10px;
+        background: none;
+        display: grid;
+        grid-template-columns: 3fr 6fr 3fr;
     }
-    .header-logo {
-        width: 80px;
+    .izquierda {
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        align-items: center;
+    }
+    .centro {
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        align-items: center;
+    }
+    .derecha {
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        align-items: center;
     }
 </style>
 {% endblock header %}
 
 {% block content %}
 <div class="layout">
+    <aside class="sidebar">
+        <nav class="sidebar-nav">
+            <div class="sidebar-seccion">Cuenta</div>
+            <a href="{{ url_for('vendedor_negocio', vendedor_id=vendedor_id) }}" class="nav-item">Mi Negocio</a>
+            <a href="{{ url_for('vendedor_datos', vendedor_id=vendedor_id) }}" class="nav-item">Mis Datos</a>
+            <a href="{{ url_for('vendedor_salir', vendedor_id=vendedor_id) }}" class="nav-item">Cerrar Cesion</a>
+            <div class="sidebar-seccion">Productos</div>
+            <a href="{{ url_for('vendedor_gestionar_productos', vendedor_id=vendedor_id) }}" class="nav-item">Gestionar</a>
+            <a href="{{ url_for('vendedor_registrar_productos', vendedor_id=vendedor_id) }}" class="nav-item">Registrar</a>
+        </nav>
+    </aside>
+
     <main class="contenido">
-
-        <div class="fila-titulo">
-            <h1 class="titulo">{{ negocio.negocio_nombre }}</h1>
-        </div>
-        <hr class="separador">
-
-        <div class="fila-titulo">
-            <p class="ubicacion">{{ negocio.negocio_municipio }}/{{ negocio.negocio_zona }}/{{ negocio.negocio_direccion }}</p>
-        </div>
-        <hr class="separador">
-
-        <div class="bloque-negocio">
-            <div class="imagen-negocio">
-                <img src="https://70.img.avito.st/image/1/1.iKSI1ra6JE2-f-ZIlPDGnV11Ikc89SyPOXUmSyhzJg.9TSupauOET7TAK78OczejXWMP4LuxdqOv4b8e45u8kk"
-                 alt="{{ negocio.negocio_nombre }}">
-            </div>
-            <div class="info-negocio">
-                <p class="descripcion">
-                    {% for linea in negocio.negocio_descripcion.split('\n') %}
-                        <p>{{ linea }}</p>
-                    {% endfor %}
-                </p>
-            </div>
-        </div>
-
-        <div class="productos-header">
-            <h2 class="productos-titulo">Productos</h2>
-        </div>
-
-        <div class="productos-lista">
-            {% for producto in productos %}
-                {{ macros.cartaHorizontal(producto) }}
-            {% endfor %}
-        </div>
-
+        {% block principal %}
+        {% endblock %}
     </main>
 </div>
 
@@ -63,7 +63,7 @@
         width: 90%;
         min-height: 100vh;
         display: grid;
-        grid-template-columns: 1fr;
+        grid-template-columns: 160px 1fr;
         margin: 0 auto;
     }
 
@@ -177,7 +177,7 @@
     .btn-imagen:hover {
         background: white;
     }
-    .info-negocio {
+    /* .info-negocio {
         padding: 20px 50px;
         font-size: 13px;
         color: var(--color-oscuro);
@@ -192,7 +192,7 @@
     }
     .info-negocio a {
         color: #185fa5;
-    }
+    } */
     .descripcion {
         margin-top: 6px !important;
         color: var(--color-gris);
