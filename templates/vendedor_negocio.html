@@ -2,18 +2,21 @@
 
 {% block principal %}
         <div class="fila-titulo">
-            <div>Visible:
+            <div class="visible">
+                <div>Visible:</div>
                 <form method="get" action="{{ url_for('negocio_cambiar_visibilidad', negocio_id=negocio.vendedor_id) }}">
-                    {% if negocio.negocio_visible %}
-                        <button>SI</button>
-                    {% else %}
-                        <button>NO</button>
-                    {% endif %}
+                    <button>
+                        {% if negocio.negocio_visible %}
+                            Si
+                        {% else %}
+                            No
+                        {% endif %}
+                    </button>
                 </form>
             </div>
         </div>
         <div class="fila-titulo">
-            <h1 class="titulo">{{ negocio.negocio_nombre }}</h1>
+            <textarea type="text" class="titulo" value="">{{ negocio.negocio_nombre }}</textarea>
             <button class="btn-editar" title="Editar nombre">
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
@@ -24,7 +27,7 @@
         <hr class="separador">
 
         <div class="fila-titulo">
-            <p class="ubicacion">{{ negocio.negocio_municipio }}/{{ negocio.negocio_zona }}/{{ negocio.negocio_direccion }}</p>
+            <div class="ubicacion"><input type="text" value="{{ negocio.negocio_municipio }}">/<input type="text" value="{{ negocio.negocio_zona }}">/<input type="text" value="{{ negocio.negocio_direccion }}"></div>
             <button class="btn-editar" title="Editar ubicacion">
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
@@ -45,11 +48,11 @@
                 </button>
             </div>
             <div class="info-negocio">
-                <p class="descripcion">
-                    {% for linea in negocio.negocio_descripcion.split('\n') %}
-                        <p>{{ linea }}</p>
-                    {% endfor %}
-                </p>
+                <textarea class="descripcion">
+                    {% if negocio.negocio_descripcion %}
+                        {{ negocio.negocio_descripcion }}
+                    {% endif %}
+                </textarea>
                 <div class="fila-editar-info">
                     <button class="btn-editar" title="Editar informacion">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -60,5 +63,18 @@
                 </div>
             </div>
         </div>
+
+<style>
+    .visible {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+    }
+    textarea {
+        width: 100%;
+        height: 100%;
+        padding: 10px;
+    }
+</style>
 
 {% endblock %}

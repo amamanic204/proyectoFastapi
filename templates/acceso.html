@@ -1,20 +1,6 @@
 {% extends "base.html" %}
 
 {% block header %}
-<div class="header-logo">
-    <div style="width:70px;">{{ macros.logo() }}</div>
-</div>
-<style>
-    header {
-        width: 100%;
-        padding: 10px 16px;
-        border-bottom: 1px solid #ddd;
-        background: var(--color-blanco);
-    }
-    .header-logo {
-        width: 80px;
-    }
-</style>
 {% endblock header %}
 
 {% block content %}
@@ -22,18 +8,19 @@
     <div class="acceso-card">
         <h2 class="acceso-titulo">Iniciar Cesion</h2>
 
-        <form action="{{ url_for('vendedor_negocio') }}">
+        <form method="post" action="{{ url_for('acceso') }}">
             <div class="campo">
                 <label for="celular">Nro cel:</label>
-                <input type="text" id="celular" name="celular">
+                <input type="text" id="celular" name="vendedor_celular">
             </div>
             <div class="campo">
                 <label for="contrasena">contrasena:</label>
-                <input type="password" id="contrasena" name="contrasena">
+                <input type="password" id="contrasena" name="vendedor_contrasena">
             </div>
             <button type="submit" class="btn-acceder">Iniciar Cesion</button>
             <p class="acceso-pie">No tienes cuenta? <a href="{{ url_for('registro') }}">Crear una</a></p>
         </form>
+        <a class="cancelar" href="{{ url_for('index') }}">X</a>
     </div>
 </div>
 
@@ -43,7 +30,7 @@
         flex-direction: row;
         justify-content: center;
         align-items: center;
-        min-height: 80vh;
+        min-height: 100vh;
         background: var(--color-blanco);
     }
     .acceso-card {
@@ -55,6 +42,7 @@
         padding: 36px 48px;
         background: var(--color-blanco);
         min-width: 340px;
+        position: relative;
     }
     .acceso-titulo {
         font-size: 16px;
@@ -113,6 +101,19 @@
     }
     .acceso-pie a {
         color: var(--color-negro);
+    }
+    .cancelar {
+        position: absolute;
+        top: 0;
+        right: 0;
+        margin: 10px;
+        /* margin: 4px; */
+        text-decoration: none;
+        padding: 4px;
+        border-radius: 6px;
+    }
+    .cancelar:hover {
+        background-color: #ccc;
     }
 </style>
 {% endblock %}

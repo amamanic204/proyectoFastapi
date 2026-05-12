@@ -1,65 +1,52 @@
 {% extends "base.html" %}
 
 {% block header %}
-<div class="header-logo">
-    <div style="width:70px;">{{ macros.logo() }}</div>
-</div>
-<style>
-    header {
-        width: 100%;
-        padding: 10px 16px;
-        border-bottom: 1px solid #ddd;
-        background: var(--color-blanco);
-    }
-    .header-logo {
-        width: 80px;
-    }
-</style>
+
 {% endblock header %}
 
 {% block content %}
 <div class="cuerpo-registro">
     <div class="registro-card">
         <h2 class="registro-titulo">Crear cuenta</h2>
-
-        <form action="">
+        <form method="post" action="{{ url_for('registro') }}" id="formRegistro">
             <div class="campo">
                 <label for="nombre">Nombre:</label>
-                <input type="text" id="nombre" name="nombre" placeholder="Juan">
+                <input type="text" id="nombre" name="vendedor_nombre" pattern="[a-zA-Z ñÑáÁéÉíÍóÓúÚüÜ]{1,}" required>
             </div>
             <div class="campo">
                 <label for="apellidos">Apellidos:</label>
-                <input type="text" id="apellidos" name="apellidos" placeholder="Pérez">
+                <input type="text" id="apellidos" name="vendedor_apellido" pattern="[a-zA-Z ñÑáÁéÉíÍóÓúÚüÜ]{1,}" required>
             </div>
             <div class="campo">
-                <label for="correo">Email:</label>
-                <input type="text" id="correo" name="correo" placeholder="xxxx@xxxx.com">
+                <label for="correo">Correo:</label>
+                <input type="email" id="correo" name="vendedor_correo" placeholder="xxxx@xxxx.com">
             </div>
             <div class="campo">
                 <label for="celular">Nro cel:</label>
-                <input type="text" id="celular" name="celular" placeholder="7xxxxxxx">
+                <input type="tel" id="celular" name="vendedor_celular" placeholder="xxxxxxxx" pattern="[67][0-9]{7}" required>
             </div>
             <div class="campo">
                 <label for="contrasena">Contraseña:</label>
-                <input type="password" id="contrasena" name="contrasena">
+                <input type="password" id="contrasena" name="vendedor_contrasena" pattern="[0-9a-zA-Z]{8}" required>
             </div>
             <div class="campo">
                 <label for="repetir">Repetir contraseña:</label>
-                <input type="password" id="repetir" name="repetir">
+                <input type="password" id="repetir" name="repetir" pattern="[0-9a-zA-Z]{8}" required>
             </div>
-            <button type="submit" class="btn-registrar">Registrarse</button>
+            <button class="btn-registrar" id="btnRegistrar">Registrarse</button>
             <p class="registro-pie">Ya tienes una cuenta? <a href="{{ url_for('acceso') }}">Iniciar sesion</a></p>
         </form>
+        <a class="cancelar" href="{{ url_for('index') }}">X</a>
     </div>
 </div>
-
 <style>
-    .cuerpo {
+    .cuerpo-registro {
         display: flex;
         flex-direction: row;
         justify-content: center;
         align-items: center;
-        min-height: 80vh;
+        min-height: 100vh;
+        width: 100%;
         background: var(--color-blanco);
     }
     .registro-card {
@@ -68,15 +55,17 @@
         align-items: center;
         border: 1px solid #ccc;
         border-radius: 16px;
-        padding: 36px 48px;
+        padding: 18px 24px;
         background: var(--color-blanco);
         min-width: 360px;
+        max-width: 50%;
+        position: relative;
     }
     .registro-titulo {
         font-size: 16px;
         font-weight: bold;
         color: var(--color-negro);
-        margin-bottom: 24px;
+        margin-bottom: 10px;
     }
     .registro-card form {
         width: 100%;
@@ -129,6 +118,19 @@
     }
     .registro-pie a {
         color: var(--color-negro);
+    }
+    .cancelar {
+        position: absolute;
+        top: 0;
+        right: 0;
+        margin: 10px;
+        /* margin: 4px; */
+        text-decoration: none;
+        padding: 4px;
+        border-radius: 6px;
+    }
+    .cancelar:hover {
+        background-color: #ccc;
     }
 </style>
 {% endblock %}

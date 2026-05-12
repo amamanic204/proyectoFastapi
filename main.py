@@ -96,16 +96,46 @@ def negocio(request: Request, negocio_id: int):
 def acceso(request: Request):
 	return templates.TemplateResponse(request, "acceso.html")
 
-@app.get("/registro", name="registro")
-def registro(request: Request):
+@app.post("/acceso", name="acceso")
+def acceso(request: Request, vendedor_celular: Annotated[str, Form()], vendedor_contrasena: Annotated[str, Form()]):
+	with Session(engine) as session:
+		vendedor = session.exec(select(Vendedor).where(Vendedor.vendedor_celular == vendedor_celular)).first()
+		if not vendedor:
+			return templates.TemplateResponse(request, "acceso.html")
+		if (vendedor.vendedor_contrasena == vendedor_contrasena):
+			negocio = session.exec(select(Negocio).where(Negocio.vendedor_id == vendedor.vendedor_id)).first()
+			if not negocio:
+				raise HTTPException(status_code=404, detail="Negocio no encontrado")
+			return templates.TemplateResponse(request, "vendedor_negocio.html", {"vendedor_id": vendedor.vendedor_id, "negocio": negocio})
+		else:
+			return templates.TemplateResponse(request, "acceso.html")
+
+@app.get("/registro", name="registro_form")
+def registro_form(request: Request):
 	return templates.TemplateResponse(request, "registro.html")
 
-
+@app.post("/registro", name="registro")
+def registro(request: Request, vendedor: Annotated[Vendedor, Form()]):
+	# return templates.TemplateResponse(request, "registro.html")
+	with Session(engine) as session:
+		if vendedor.vendedor_correo == '':
+			vendedor.vendedor_correo = None
+		session.add(vendedor)
+		session.commit()
+		session.refresh(vendedor)
+		negocio = Negocio(vendedor_id=vendedor.vendedor_id)
+		session.add(negocio)
+		session.commit()
+		session.refresh(negocio)
+		if not negocio:
+			raise HTTPException(status_code=404, detail="Negocio no encontrado")
+		return templates.TemplateResponse(request, "vendedor_negocio.html", {"vendedor_id": vendedor.vendedor_id, "negocio": negocio})
+		
 # vendedor
 @app.get("/vendedor/negocio/{vendedor_id}", name="vendedor_negocio")
 def vendedor_negocio(request: Request, vendedor_id: int):
 	with Session(engine) as session:
-		negocio = session.get(Negocio, vendedor_id)
+		negocio = session.exec(select(Negocio).where(Negocio.vendedor_id == vendedor_id)).first()
 		if not negocio:
 			raise HTTPException(status_code=404, detail="Negocio no encontrado")
 		return templates.TemplateResponse(request, "vendedor_negocio.html", {"vendedor_id": vendedor_id, "negocio": negocio})
@@ -170,7 +200,6 @@ def vendedor_cambiar_contrasena_form(request: Request, vendedor_id: int):
 
 @app.post("/vendedor/cambiar/contrasena/{vendedor_id}", name="vendedor_cambiar_contrasena")
 def vendedor_cambiar_contrasena(request: Request, vendedor_id: int, contrasena_antigua: Annotated[str, Form()], contrasena_nueva: Annotated[str, Form()]):	
-	# return [contrasena_antigua, contrasena_nueva]
 	with Session(engine) as session:
 		db_vendedor = session.get(Vendedor, vendedor_id)
 		if not db_vendedor:

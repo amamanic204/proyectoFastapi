@@ -434,11 +434,11 @@
         </div>
     </div>
     <style>
-        .carta {
+        .carta-negocio {
             width: 80%;
             display: grid;
-            grid-template-columns: 4fr 8fr;
-            grid-auto-rows: 200px;
+            /* grid-template-columns: 4fr 8fr; */
+            grid-auto-rows: auto;
             gap: 6px;
             background-color: var(--color-blanco);
             border: 1px solid var(--color-gris);
@@ -447,14 +447,14 @@
             border-radius: 10px;
             margin: 10px auto;
         }
-        .carta .imagen-fondo {
+        .carta-negocio .imagen-fondo {
             border-radius: 10px;
             background-image: url("https://cdn0.youla.io/files/images/780_780/63/1c/631c97953a91d52eaf69db51-1.jpg");
             background-size: auto 100%;
             background-repeat: no-repeat;
             background-position: center;
         }
-        .carta .imagen-fondo .imagen {
+        .carta-negocio .imagen-fondo .imagen {
             margin: 0;
             width: 100%;
             height: 100%;
@@ -471,42 +471,42 @@
             justify-content: right;
             align-items: end;
         } 
-        .carta .imagen-fondo .imagen .precio {
+        .carta-negocio .imagen-fondo .imagen .precio {
             font-size: 1.3em;
             padding: 3px;
             background-color: var(--color-dorado);
             margin-bottom: 20px;
         }
-        .carta .informacion {
+        .carta-negocio .informacion {
             padding: 8px;
             display: grid;
             grid-template-rows: 2.5em auto 1em;
         }
-        .carta .informacion .nombre {
+        .carta-negocio .informacion .nombre {
             padding: 4px 0;
             font-size: 1.5em;
             font-weight: bold;
             border-bottom: 1px solid var(--color-gris);
         }
-        .carta .informacion .detalle {
+        .carta-negocio .informacion .detalle {
             padding-top: 4px;
             padding-left: 4px;
             position: relative;
             overflow: hidden;
         }
-        .carta .informacion .mas {
+        .carta-negocio .informacion .mas {
             position: absolute;
             bottom: 0;
             right: 0;
             background-color: var(--color-blanco);
             width: 100%;
         }
-        .carta .informacion .acciones {
+        .carta-negocio .informacion .acciones {
             display: flex;
             flex-direction: row;
             justify-content: end;
         }
-        .carta .informacion .acciones div {
+        .carta-negocio .informacion .acciones div {
             margin: 0 4px;
         }
     </style>
