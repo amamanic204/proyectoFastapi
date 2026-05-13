@@ -112,12 +112,9 @@
             background-color: var(--color-blanco);
             color: var(--color-negro);
         }
-        /* .botonSecundario:hover{
-            box-shadow: 2px 2px 5px var(--color-gris);
-            background-color: var(--color-negro);
-            color: var(--color-blanco);
-            transition: 0.15s;
-        } */
+        .botonSecundario  a {
+            text-decoration: none;
+        }
     </style>
 {% endmacro -%}
 
@@ -192,8 +189,16 @@
 
 {% macro cartaHorizontal(producto) -%}
     <div class="carta">
-        <div class="imagen-fondo">
-            <div class="imagen"> 
+        <div class="imagen-fondo"
+        {% if producto.producto_imagen %}
+            style="background-image: url('{{ producto.producto_imagen }}')"
+        {% endif %}
+        >
+            <div class="imagen" 
+            {% if producto.producto_imagen %}
+                style="background-image: url('{{ producto.producto_imagen }}')"
+            {% endif %}
+            > 
                 {% if producto.producto_precio %}
                 <div class="precio">{{ producto.producto_precio }}</div>
                 {% endif %}
@@ -201,7 +206,7 @@
         </div>
         <div class="informacion">
             <div class="nombre">
-                <a href="">
+                <a href="{{ url_for('buscar_producto', producto_id=producto.producto_id) }}">
                     {{ producto.producto_nombre }}
                 </a>
             </div>
@@ -237,7 +242,6 @@
         }
         .carta .imagen-fondo {
             border-radius: 10px;
-            background-image: url("https://cdn0.youla.io/files/images/780_780/63/1c/631c97953a91d52eaf69db51-1.jpg");
             background-size: auto 100%;
             background-repeat: no-repeat;
             background-position: center;
@@ -247,7 +251,6 @@
             width: 100%;
             height: 100%;
             border-radius: 10px;
-            background-image: url("https://cdn0.youla.io/files/images/780_780/63/1c/631c97953a91d52eaf69db51-1.jpg");
             background-size: 100% auto;
             background-repeat: no-repeat;
             background-position: center;
@@ -302,8 +305,16 @@
 
 {% macro cartaHorizontalVendedor(producto) -%}
     <div class="carta">
-        <div class="imagen-fondo">
-            <div class="imagen"> 
+        <div class="imagen-fondo"
+        {% if producto.producto_imagen %}
+            style="background-image: url('{{ producto.producto_imagen }}')"
+        {% endif %}
+        >
+            <div class="imagen" 
+            {% if producto.producto_imagen %}
+                style="background-image: url('{{ producto.producto_imagen }}')"
+            {% endif %}
+            > 
                 {% if producto.producto_precio %}
                 <div class="precio">{{ producto.producto_precio }}</div>
                 {% endif %}
@@ -327,7 +338,17 @@
                 {% endif %}
             </div>
             <div class="acciones">
-                <div><a href="">Adicionar</a></div>
+                <div>
+                    <form method="get" action="{{ url_for('vendedor_adicionar_producto', vendedor_id=vendedor_id, producto_id=producto.producto_id) }}">
+                        <button>
+                            {% if producto.negocio_id and producto.vendedor_id and producto.vendedor_id == vendedor_id %}
+                                adicionado
+                            {% else %}
+                                no adicionado
+                            {% endif %}
+                        </button>
+                    </form>
+                </div>
                 <div><a href="">Editar</a></div>
                 <div><a href="">Precio</a></div>
             </div>
@@ -416,7 +437,7 @@
     <div class="carta-negocio">
         <div class="informacion">
             <div class="nombre">
-                <a href="">
+                <a href="{{ url_for('negocio', negocio_id=negocio.negocio_id) }}">
                     {{ negocio.negocio_nombre }}
                 </a>
             </div>

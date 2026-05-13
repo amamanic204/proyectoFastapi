@@ -8,13 +8,13 @@
     
     <div class="acceso-cuerpo">
     <div class="acceso-card">
-        <h3>Combio de Contraseña</h3>
+        <h3>Combio de CORREO</h3>
 
         <form method="post" action="{{ url_for('vendedor_cambiar_contrasena', vendedor_id=vendedor_id) }}">
         
-        <label for="contrasena_antigua">Contraseña Acutal: </label>
+        <label for="contrasena_antigua">NUEVO CORREO: </label>
         <input type="text" id="contrasena_antigua" name="contrasena_antigua">
-        <label for="contrasena_nueva">Nueva Contraseña: </label>
+        <label for="contrasena_nueva">Contraseña: </label>
         <input type="text" id="contrasena_nueva" name="contrasena_nueva">
         <button>Cambiar Contraseña</button>
     </form>

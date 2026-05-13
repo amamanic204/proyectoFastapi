@@ -51,10 +51,18 @@
     {% endfor %}
 
     {% if negocios|length >= 1 %}
-        <div>Disponible en:</div>
+        <div class="disponible">Disponible en:</div>
         {% for negocio in negocios %}
             {{ macros.cartaHorizontalNegocio(negocio) }}
         {% endfor %}
     {% endif %}
-    
+<style>
+    .disponible {
+        width: 80%;
+        margin: auto;
+        margin-top: 10px;
+        margin-bottom: 20px;
+        font-size: 1.8em;
+    }
+</style>
 {% endblock content %}

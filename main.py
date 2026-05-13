@@ -150,7 +150,40 @@ def vendedor_datos(request: Request, vendedor_id:int):
 
 @app.get("/vendedor/gestionar/productos/{vendedor_id}", name="vendedor_gestionar_productos")
 def vendedor_gestionar_productos(request: Request, vendedor_id: int):
-	return templates.TemplateResponse(request, "vendedor_gestionar_productos.html", {"vendedor_id": vendedor_id})
+	with Session(engine) as session:
+		resultado_productos = session.exec(text("select c.vendedor_id, b.negocio_id, a.producto_nombre, a.producto_id, a.producto_detalle, a.producto_imagen from producto a join almacen b on a.producto_id=b.producto_id join negocio c on b.negocio_id=c.negocio_id where vendedor_id="+str(vendedor_id)))
+		session.commit()
+		productos = []
+		for i in resultado_productos:
+			productos.append(i._mapping)
+		return templates.TemplateResponse(request, "vendedor_gestionar_productos.html", {"vendedor_id": vendedor_id, "productos": productos})
+
+
+@app.get("/vendedor/adicionar/producto/{vendedor_id}/{producto_id}", name="vendedor_adicionar_producto")
+def vendedor_adicionar_producto(request: Request, vendedor_id: int, producto_id: int):
+	with Session(engine) as session:
+		negocios = session.exec(text("select negocio_id from negocio where vendedor_id="+str(vendedor_id)))
+		session.commit()
+		x = []
+		for i in negocios:
+			x.append(i._mapping)
+		negocio=x[0]
+		db_almacen = session.get(Almacen, (negocio.negocio_id, producto_id))
+		if not db_almacen:
+			almacen = Almacen(negocio_id=negocio.negocio_id, producto_id=producto_id)
+			session.add(almacen)
+			session.commit()
+			session.refresh(almacen)
+		else:
+			session.delete(db_almacen)
+			session.commit()
+		resultado_productos = session.exec(text("select c.vendedor_id, b.negocio_id, a.producto_nombre, a.producto_id, a.producto_detalle, a.producto_imagen from producto a join almacen b on a.producto_id=b.producto_id join negocio c on b.negocio_id=c.negocio_id where vendedor_id="+str(vendedor_id)))
+		session.commit()
+		productos = []
+		for i in resultado_productos:
+			productos.append(i._mapping)
+		return templates.TemplateResponse(request, "vendedor_gestionar_productos.html", {"vendedor_id": vendedor_id, "productos": productos})
+
 
 @app.get("/vendedor/registrar/productos/{vendedor_id}", name="vendedor_registrar_productos")
 def vendedor_registrar_productos(request: Request, vendedor_id: int):
@@ -166,13 +199,14 @@ def vendedor_salir(request: Request, vendedor_id: int):
 @app.get("/vendedor/buscar/{vendedor_id}", name="vendedor_buscar")
 def buscar(request: Request, vendedor_id: int, busqueda: str):
 	with Session(engine) as session:
-		resultado_productos = session.exec(text("select * from (select id from producto_bruto where valor like '%"+busqueda+"%' group by id) join producto on id=producto_id"))
+		resultado_productos = session.exec(text("select * from (select id from producto_bruto where valor like '%"+busqueda+"%' group by id) a left join (select p.producto_id, p.producto_nombre, p.producto_detalle, p.producto_imagen, negocio.negocio_id, negocio.vendedor_id from producto p left join almacen on p.producto_id=almacen.producto_id left join negocio on almacen.negocio_id = negocio.negocio_id) b on a.id=b.producto_id"))
+
+		# select * from (select id from producto_bruto where valor like '%"+busqueda+"%' group by id) a left join (select producto.producto_id, almacen.negocio_id from producto left join almacen on producto.producto_id=almacen.producto_id) b on a.id=b.producto_id
+		# select * from (select id from producto_bruto where valor like '%iphone%' group by id) a left join (select producto.producto_id, almacen.negocio_id from producto left join almacen on producto.producto_id=almacen.producto_id) b on a.id=b.producto_id
 		session.commit()
 		productos = []
 		for i in resultado_productos:
 			productos.append(i._mapping)
-		print('---------------------------------------------')
-		print(len(productos))
 		return templates.TemplateResponse(request, "vendedor_gestionar_productos.html", {"vendedor_id": vendedor_id, "busqueda": busqueda, "productos": productos})
 
 
@@ -190,12 +224,62 @@ def negocio_cambiar_visibilidad(request: Request, negocio_id: int):
 		session.add(db_negocio)
 		session.commit()
 		session.refresh(db_negocio)
-		return {'exito': True}
+		return templates.TemplateResponse(request, "vendedor_negocio.html", {"vendedor_id": db_negocio.vendedor_id, "negocio": db_negocio})
+
+@app.get("/negocio/cambiar/nombre/{negocio_id}/", name="negocio_cambiar_nombre")
+def negocio_cambiar_nombre(request: Request, negocio_id: int, nuevo_nombre: str):
+	with Session(engine) as session:
+		db_negocio = session.get(Negocio, negocio_id)
+		if not db_negocio:
+			raise HTTPException(status_code=404, detail="Negocio no encontrado")
+		db_negocio.sqlmodel_update({"negocio_nombre": nuevo_nombre}) 
+		session.add(db_negocio)
+		session.commit()
+		session.refresh(db_negocio)
+		return templates.TemplateResponse(request, "vendedor_negocio.html", {"vendedor_id": db_negocio.vendedor_id, "negocio": db_negocio})
+
+@app.get("/negocio/cambiar/ubicacion/{negocio_id}/", name="negocio_cambiar_ubicacion")
+def negocio_cambiar_ubicacion(request: Request, negocio_id: int, nuevo_municipio: str, nueva_zona: str, nueva_direccion: str):
+	with Session(engine) as session:
+		db_negocio = session.get(Negocio, negocio_id)
+		if not db_negocio:
+			raise HTTPException(status_code=404, detail="Negocio no encontrado")
+		db_negocio.sqlmodel_update({"negocio_municipio": nuevo_municipio, "negocio_zona": nueva_zona, "negocio_direccion": nueva_direccion}) 
+		session.add(db_negocio)
+		session.commit()
+		session.refresh(db_negocio)
+		return templates.TemplateResponse(request, "vendedor_negocio.html", {"vendedor_id": db_negocio.vendedor_id, "negocio": db_negocio})
+
+@app.get("/negocio/cambiar/imagen/{negocio_id}/", name="negocio_cambiar_imagen")
+def negocio_cambiar_imagen(request: Request, negocio_id: int, nueva_imagen: str):
+	with Session(engine) as session:
+		db_negocio = session.get(Negocio, negocio_id)
+		if not db_negocio:
+			raise HTTPException(status_code=404, detail="Negocio no encontrado")
+		db_negocio.sqlmodel_update({"negocio_imagen": "https://i.ytimg.com/vi/5sdOrhS6ypI/maxresdefault.jpg" }) 
+		session.add(db_negocio)
+		session.commit()
+		session.refresh(db_negocio)
+		return templates.TemplateResponse(request, "vendedor_negocio.html", {"vendedor_id": db_negocio.vendedor_id, "negocio": db_negocio})
+
+@app.get("/negocio/cambiar/descripcion/{negocio_id}/", name="negocio_cambiar_descripcion")
+def negocio_cambiar_nombre(request: Request, negocio_id: int, nueva_descripcion: str):
+	with Session(engine) as session:
+		db_negocio = session.get(Negocio, negocio_id)
+		if not db_negocio:
+			raise HTTPException(status_code=404, detail="Negocio no encontrado")
+		db_negocio.sqlmodel_update({"negocio_descripcion": nueva_descripcion }) 
+		session.add(db_negocio)
+		session.commit()
+		session.refresh(db_negocio)
+		return templates.TemplateResponse(request, "vendedor_negocio.html", {"vendedor_id": db_negocio.vendedor_id, "negocio": db_negocio})
+
+
 
 
 # edicion vendedor
-@app.get("/vendedor/cambiar/contrasena/form/{vendedor_id}", name="vendedor_cambiar_contrasena_form")
-def vendedor_cambiar_contrasena_form(request: Request, vendedor_id: int):
+@app.post("/vendedor/cambiar/contrasena/form/", name="vendedor_cambiar_contrasena_form")
+def vendedor_cambiar_contrasena_form(request: Request, vendedor_id: Annotated[int, Form()]):
 	return templates.TemplateResponse(request, "vendedor_cambiar_contrasena_form.html", {"vendedor_id": vendedor_id})
 
 @app.post("/vendedor/cambiar/contrasena/{vendedor_id}", name="vendedor_cambiar_contrasena")

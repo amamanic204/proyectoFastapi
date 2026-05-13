@@ -2,14 +2,51 @@
 
 {% block principal %}
 
-    <div class="bloque-negocio">
-        <div class="info-negocio">
-            <p>Nombre: {{ vendedor.vendedor_nombre }}</p>
-            <p>Apellido: {{ vendedor.vendedor_apellido }}</p>
-            <p>Correo: {{ vendedor.vendedor_correo }}</p>
-            <p>Celular: {{ vendedor.vendedor_celular }}</p>
-            <p>Contraseña: {{ vendedor.vendedor_contrasena }} <button></button></p>
-        </div>
-    </div>
+<div class="datos">
+    <h3 class="titulo">Datos de tu cuenta:</h3>
+    <div>Nombre: {{ vendedor.vendedor_nombre }}</div>
+    <div>Apellido: {{ vendedor.vendedor_apellido }}</div>
+    <div><form method="get" action="">
+        Correo: 
+        <input type="text" value="{{ vendedor.vendedor_correo }}" disabled>
+        <button class="btn-editar" title="Editar">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+            </svg>
+        </button>
+    </form></div>
+    <div><form method="get" action="">
+        Celular: 
+        <input type="text" value="{{ vendedor.vendedor_celular }}" disabled> 
+        <button class="btn-editar" title="Editar">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+            </svg>
+        </button>
+    </form></div>
+    <div><form method="post" action="{{ url_for('vendedor_cambiar_contrasena_form')}}">
+        Contraseña: 
+        <input name="vendedor_id" value="{{vendedor.vendedor_id}}" type="password" readonly    >
+        <button class="btn-editar" title="Editar">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+            </svg>
+        </button>
+    </form></div>
+</div>
+
+<style>
+    .datos .titulo {
+        font-size: 1.5em;
+    }
+    .datos div {
+        font-size: 1.2em;
+        margin-left: 10px;
+        margin-top: 10px;
+    }
+</style>
 
 {% endblock %}

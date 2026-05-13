@@ -56,7 +56,10 @@
 
         <div class="bloque-negocio">
             <div class="imagen-negocio">
-                <img src="https://70.img.avito.st/image/1/1.iKSI1ra6JE2-f-ZIlPDGnV11Ikc89SyPOXUmSyhzJg.9TSupauOET7TAK78OczejXWMP4LuxdqOv4b8e45u8kk"
+                <img 
+                {% if negocio.negocio_imagen %}
+                    src="{{ negocio.negocio_imagen }}"
+                {% endif %}
                  alt="{{ negocio.negocio_nombre }}">
             </div>
             <div class="info-negocio">

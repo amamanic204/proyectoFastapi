@@ -5,50 +5,52 @@
 {% endblock header %}
 
 {% block content %}
-    
-    <div class="acceso-cuerpo">
-    <div class="acceso-card">
-        <h3>Combio de Contraseña</h3>
-
-        <form method="post" action="{{ url_for('vendedor_cambiar_contrasena', vendedor_id=vendedor_id) }}">
-        
-        <label for="contrasena_antigua">Contraseña Acutal: </label>
-        <input type="text" id="contrasena_antigua" name="contrasena_antigua">
-        <label for="contrasena_nueva">Nueva Contraseña: </label>
-        <input type="text" id="contrasena_nueva" name="contrasena_nueva">
-        <button>Cambiar Contraseña</button>
-    </form>
-        <a class="cancelar" href="{{ url_for('vendedor_datos', vendedor_id=vendedor_id) }}">X</a>
+<div class="cuerpo-registro">
+    <div class="registro-card">
+        <h2 class="registro-titulo">Crear cuenta</h2>
+        <p>Ingrese los datos en la siguiente forma</p>
+        <p>atributo: valor</p>
+        <p>ej: nombre: samsung s27</p>
+        <form method="post" action="{{ url_for('registro') }}" id="formRegistro">
+            <div class="campo">
+                <textarea name="" id="">
+                    nombre: 
+                </textarea>
+            </div>
+            <button class="btn-registrar" id="btnRegistrar">registrar</button>
+        </form>
+        <a class="cancelar" href="{{ url_for('index') }}">X</a>
     </div>
 </div>
-
 <style>
-    .cuerpo {
+    .cuerpo-registro {
         display: flex;
         flex-direction: row;
         justify-content: center;
         align-items: center;
         min-height: 100vh;
+        width: 100%;
         background: var(--color-blanco);
     }
-    .acceso-card {
+    .registro-card {
         display: flex;
         flex-direction: column;
         align-items: center;
         border: 1px solid #ccc;
         border-radius: 16px;
-        padding: 36px 48px;
+        padding: 18px 24px;
         background: var(--color-blanco);
-        min-width: 340px;
+        min-width: 360px;
+        max-width: 50%;
         position: relative;
     }
-    .acceso-titulo {
+    .registro-titulo {
         font-size: 16px;
         font-weight: bold;
         color: var(--color-negro);
-        margin-bottom: 24px;
+        margin-bottom: 10px;
     }
-    .acceso-card form {
+    .registro-card form {
         width: 100%;
         display: flex;
         flex-direction: column;
@@ -79,7 +81,7 @@
     .campo input:focus {
         border-color: var(--color-negro);
     }
-    .btn-acceder {
+    .btn-registrar {
         margin-top: 8px;
         padding: 8px 28px;
         background: var(--color-negro);
@@ -89,15 +91,15 @@
         font-size: 13px;
         cursor: pointer;
     }
-    .btn-acceder:hover {
+    .btn-registrar:hover {
         background: var(--color-oscuro);
     }
-    .acceso-pie {
+    .registro-pie {
         font-size: 13px;
         color: var(--color-oscuro);
         margin-top: 4px;
     }
-    .acceso-pie a {
+    .registro-pie a {
         color: var(--color-negro);
     }
     .cancelar {

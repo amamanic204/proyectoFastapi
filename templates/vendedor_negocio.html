@@ -1,10 +1,10 @@
 {% extends "vendedor_base.html" %}
 
 {% block principal %}
-        <div class="fila-titulo">
+        <div class="fila">
             <div class="visible">
                 <div>Visible:</div>
-                <form method="get" action="{{ url_for('negocio_cambiar_visibilidad', negocio_id=negocio.vendedor_id) }}">
+                <form method="get" action="{{ url_for('negocio_cambiar_visibilidad', negocio_id=negocio.negocio_id) }}">
                     <button>
                         {% if negocio.negocio_visible %}
                             Si
@@ -15,66 +15,211 @@
                 </form>
             </div>
         </div>
-        <div class="fila-titulo">
-            <textarea type="text" class="titulo" value="">{{ negocio.negocio_nombre }}</textarea>
+        <div class="fila">
+        <form class="form-nombre" method="get" action="{{ url_for('negocio_cambiar_nombre', negocio_id=negocio.negocio_id) }}">
+            <textarea type="text" class="titulo" value="" name="nuevo_nombre" rows="2">
+                {%- if negocio.negocio_nombre -%}
+                    {{ negocio.negocio_nombre }}
+                {%- endif -%}
+            </textarea>
             <button class="btn-editar" title="Editar nombre">
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
                     <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
                 </svg>
             </button>
+        </form>
         </div>
         <hr class="separador">
 
-        <div class="fila-titulo">
-            <div class="ubicacion"><input type="text" value="{{ negocio.negocio_municipio }}">/<input type="text" value="{{ negocio.negocio_zona }}">/<input type="text" value="{{ negocio.negocio_direccion }}"></div>
+        <div class="fila">
+        <form class="form-ubicacion" method="get" action="{{ url_for('negocio_cambiar_ubicacion', negocio_id=negocio.negocio_id) }}">
+            <div class="ubicacion">
+                <input type="text" name="nuevo_municipio"
+                    {%- if negocio.negocio_nombre -%}
+                        value="{{ negocio.negocio_municipio }}"
+                    {%- endif -%} 
+                >/
+                <input type="text" name="nueva_zona"
+                    {%- if negocio.negocio_nombre -%}
+                        value="{{ negocio.negocio_zona }}"
+                    {%- endif -%} 
+                >/
+                <input type="text" name="nueva_direccion" 
+                    {%- if negocio.negocio_nombre -%}
+                        value="{{ negocio.negocio_direccion }}"
+                    {%- endif -%} 
+                >
+            </div>
             <button class="btn-editar" title="Editar ubicacion">
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
                     <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
                 </svg>
             </button>
+        </form>
         </div>
         <hr class="separador">
 
-        <div class="bloque-negocio">
-            <div class="imagen-negocio">
-                <img src="https://70.img.avito.st/image/1/1.iKSI1ra6JE2-f-ZIlPDGnV11Ikc89SyPOXUmSyhzJg.9TSupauOET7TAK78OczejXWMP4LuxdqOv4b8e45u8kk" alt="foto del negocio">
-                <button class="btn-imagen" title="Cambiar imagen">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/>
-                        <polyline points="21 15 16 10 5 21"/>
-                    </svg>
-                </button>
+        <div class="fila imagen-descripcion">
+            <div class="imagen">
+                
+                <img 
+                {% if negocio.negocio_imagen %}
+                    src="{{ negocio.negocio_imagen }}"
+                {% endif %}
+                alt="">
+                <form action="{{ url_for('negocio_cambiar_imagen', negocio_id=negocio.negocio_id) }}" id="formImagen">
+                    <label for="avatar">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/>
+                            <polyline points="21 15 16 10 5 21"/>
+                        </svg>
+                    </label>
+                    <input type="file" id="avatar" name="nueva_imagen" accept="image/png, image/jpeg" />
+                </form>
+                    
             </div>
-            <div class="info-negocio">
-                <textarea class="descripcion">
-                    {% if negocio.negocio_descripcion %}
-                        {{ negocio.negocio_descripcion }}
-                    {% endif %}
-                </textarea>
-                <div class="fila-editar-info">
+            <div class="descripcion">
+                <form method="get" action="{{ url_for('negocio_cambiar_descripcion', negocio_id=negocio.negocio_id) }}">                    
+                    <textarea class="descripcion" name="nueva_descripcion">
+                        {%- if negocio.negocio_descripcion -%}
+                            {{ negocio.negocio_descripcion }}
+                        {% endif -%}
+                    </textarea>
                     <button class="btn-editar" title="Editar informacion">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
                             <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
                         </svg>
                     </button>
-                </div>
+                </form>
             </div>
         </div>
+<script>
+    form_imagen = document.getElementById("formImagen");
+    form_imagen.addEventListener("change", function(){
+        form_imagen.submit();
+    });
+</script>
 
 <style>
+    .contenido {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .fila {
+        margin-bottom: 10px;
+    }
+
     .visible {
         display: flex;
         flex-direction: row;
         align-items: center;
     }
-    textarea {
+
+    .form-nombre {
         width: 100%;
-        height: 100%;
+        display: grid;
+        grid-template-columns: auto 30px;
+    }
+    .form-nombre textarea {
+        font-size: 50px;
+        font-weight: bold;
+    }
+
+    .form-ubicacion {
+        width: 100%;
+        display: flex;
+        flex-direction: row;
+        justify-content: start;
+    }
+    .form-ubicacion input[type=text] {
+        /* font-size: 20px; */
+    }
+    
+
+    .imagen-descripcion {
+        width: 100%;
+        height: 600px;
+        display: grid;
+        grid-template-columns: 4fr 8fr;
+    }
+
+    .imagen img {
+        width: 100%;
+    }
+    .imagen input[type=file] {
+        display: none;
+    }
+    .imagen label {
+        cursor: pointer;
+    }
+
+    .descripcion form {
+        display: grid;
+        grid-template-columns: auto 30px;
+    }
+
+    .descripcion form textarea {
+        width: 100%;
+        height: 300px;
         padding: 10px;
     }
+
+    .separador {
+        border: none;
+        border-top: 1px dashed #aaa;
+        margin: 6px 0 12px;
+    }
+
+    .btn-editar {
+        background: none;
+        border: none;
+        cursor: pointer;
+        padding: 4px;
+        color: var(--color-oscuro);
+        display: flex;
+        align-items: center;
+        border-radius: 4px;
+    }
+    .btn-editar:hover {
+        background: #e0e0e0;
+    }
+
+    .btn-imagen {
+        position: absolute;
+        bottom: 8px;
+        right: 8px;
+        background: rgba(255,255,255,0.85);
+        border: 1px solid #ccc;
+        border-radius: 6px;
+        padding: 5px 7px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+    }
+    .btn-imagen:hover {
+        background: white;
+    }
+
+    /* .info-negocio {
+        padding: 20px 50px;
+        font-size: 13px;
+        color: var(--color-oscuro);
+        display: flex;
+        flex-direction: column;
+        gap: 3px;
+        position: relative;
+    }
+    .info-negocio p {
+        margin: 0;
+        line-height: 1.5;
+    }
+    .info-negocio a {
+        color: #185fa5;
+    } */
 </style>
 
 {% endblock %}
