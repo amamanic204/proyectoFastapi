@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Request, HTTPException, Form
+from fastapi import FastAPI, Request, HTTPException, Form, File, UploadFile
 #you could delete the following line since we are using now templates
 # from fastapi.responses import HTMLResponse 
 from fastapi.staticfiles import StaticFiles
@@ -6,6 +6,8 @@ from fastapi.templating import Jinja2Templates
 from fastapi.responses import RedirectResponse
 from sqlmodel import Field, Session, SQLModel, create_engine, select, text
 from typing import Annotated
+import shutil
+import os
 
 # modelos
 class Vendedor(SQLModel, table=True):
@@ -59,6 +61,7 @@ def on_startup():
 
 # the name attribute tell us how we can reference in our templates
 app.mount("/static", StaticFiles(directory="static"), name="static")
+app.mount("/media", StaticFiles(directory="media"), name="media")
 
 templates = Jinja2Templates(directory="templates")
 
@@ -130,6 +133,8 @@ def registro(request: Request, vendedor: Annotated[Vendedor, Form()]):
 		if not negocio:
 			raise HTTPException(status_code=404, detail="Negocio no encontrado")
 		return templates.TemplateResponse(request, "vendedor_negocio.html", {"vendedor_id": vendedor.vendedor_id, "negocio": negocio})
+
+
 		
 # vendedor
 @app.get("/vendedor/negocio/{vendedor_id}", name="vendedor_negocio")
@@ -151,13 +156,12 @@ def vendedor_datos(request: Request, vendedor_id:int):
 @app.get("/vendedor/gestionar/productos/{vendedor_id}", name="vendedor_gestionar_productos")
 def vendedor_gestionar_productos(request: Request, vendedor_id: int):
 	with Session(engine) as session:
-		resultado_productos = session.exec(text("select c.vendedor_id, b.negocio_id, a.producto_nombre, a.producto_id, a.producto_detalle, a.producto_imagen from producto a join almacen b on a.producto_id=b.producto_id join negocio c on b.negocio_id=c.negocio_id where vendedor_id="+str(vendedor_id)))
+		resultado_productos = session.exec(text("select c.vendedor_id, b.negocio_id, a.producto_nombre, a.producto_id, a.producto_detalle, a.producto_imagen, b.producto_precio from producto a join almacen b on a.producto_id=b.producto_id join negocio c on b.negocio_id=c.negocio_id where vendedor_id="+str(vendedor_id)))
 		session.commit()
 		productos = []
 		for i in resultado_productos:
 			productos.append(i._mapping)
 		return templates.TemplateResponse(request, "vendedor_gestionar_productos.html", {"vendedor_id": vendedor_id, "productos": productos})
-
 
 @app.get("/vendedor/adicionar/producto/{vendedor_id}/{producto_id}", name="vendedor_adicionar_producto")
 def vendedor_adicionar_producto(request: Request, vendedor_id: int, producto_id: int):
@@ -185,9 +189,151 @@ def vendedor_adicionar_producto(request: Request, vendedor_id: int, producto_id:
 		return templates.TemplateResponse(request, "vendedor_gestionar_productos.html", {"vendedor_id": vendedor_id, "productos": productos})
 
 
-@app.get("/vendedor/registrar/productos/{vendedor_id}", name="vendedor_registrar_productos")
+@app.get("/vendedor/registrar/productos/{vendedor_id}", name="vendedor_registrar_productos_form")
 def vendedor_registrar_productos(request: Request, vendedor_id: int):
-	return templates.TemplateResponse(request, "vendedor_registrar_productos.html", {"vendedor_id": vendedor_id})
+	return templates.TemplateResponse(request, "vendedor_registrar_productos_form.html", {"vendedor_id": vendedor_id})
+
+@app.post("/vendedor/registrar/productos/{vendedor_id}", name="vendedor_registrar_productos")
+def registro_producto(request: Request, vendedor_id: int, detalle: Annotated[str, Form()]):
+	pares = []
+	par_nombre=[]
+	for linea in detalle.split("\n"):
+		par = linea.split(":")
+		if len(par) == 2: 
+			if par[0].upper() == "NOMBRE":
+				par_nombre = par
+			else:
+				pares.append(par)
+	if len(par_nombre) != 2:
+		return templates.TemplateResponse(request, "vendedor_registrar_productos_form.html", {"vendedor_id": vendedor_id})
+
+	with Session(engine) as session:
+		session.add(Producto(producto_nombre=par_nombre[1], producto_detalle=detalle, producto_imagen="noimage.png"))
+		session.commit()
+		producto = session.exec(text("select producto_id from producto where producto_nombre=\'"+par_nombre[1]+"\'")).first()
+		session.commit()
+		if not producto:
+			raise HTTPException(status_code=404, detail="Producto registrado INCORRECTAMENTE")
+		
+		producto_id = producto[0]
+		insertar = "insert into producto_bruto values ("+str(producto_id)+", '"+par_nombre[0]+"', '"+par_nombre[1]+"')"
+		for par in pares:
+			insertar += ", ("+str(producto_id)+", '"+par[0]+"', '"+par[1]+"')"
+		session.exec(text(insertar))
+		session.commit()
+		# ======================================================================================
+		# this code is repeated from function 'adicionar' (un poquito mejorado)
+		negocio = session.exec(text("select negocio_id from negocio where vendedor_id="+str(vendedor_id))).first()
+		session.commit()
+		if not negocio:
+			raise HTTPException(status_code=404, detail="Negocio no encontrado")
+		negocio_id = negocio[0]
+		almacen = Almacen(negocio_id=negocio_id, producto_id=producto_id)
+		session.add(almacen)
+		session.commit()
+		# eso es copiado el 'vendedor buscar' tambien
+		resultado_productos = session.exec(text("select c.vendedor_id, b.negocio_id, a.producto_nombre, a.producto_id, a.producto_detalle, a.producto_imagen from producto a join almacen b on a.producto_id=b.producto_id join negocio c on b.negocio_id=c.negocio_id where vendedor_id="+str(vendedor_id)))
+		session.commit()
+		productos = []
+		for i in resultado_productos:
+			productos.append(i._mapping)
+		return templates.TemplateResponse(request, "vendedor_gestionar_productos.html", {"vendedor_id": vendedor_id, "productos": productos})
+
+@app.get("/vendedor/editar/producto/{vendedor_id}/{producto_id}", name="vendedor_editar_producto_form")
+def vendedor_editar_producto_form(request: Request, vendedor_id: int, producto_id: int):
+	with Session(engine) as session:	
+		producto = session.get(Producto, producto_id)
+		if not producto:
+			raise HTTPException(status_code=404, detail="Producto no encontrado")
+		return templates.TemplateResponse(request, "vendedor_editar_producto_form.html", {"vendedor_id": vendedor_id, "producto":	producto})
+
+@app.post("/vendedor/editar/producto/{vendedor_id}/{producto_id}", name="vendedor_editar_producto")
+def vendedor_editar_producto(request: Request, vendedor_id: int, producto_id: int, detalle: Annotated[str, Form()]):
+	pares = []
+	par_nombre=[]
+	for linea in detalle.split("\n"):
+		par = linea.split(":")
+		if len(par) == 2: 
+			if par[0].upper() == "NOMBRE":
+				par_nombre = par
+			else:
+				pares.append(par)
+	if len(par_nombre) != 2:
+		return templates.TemplateResponse(request, "vendedor_editar_productos_form.html", {"vendedor_id": vendedor_id, "producto_id": producto_id})
+
+	with Session(engine) as session:
+		db_producto = session.get(Producto, producto_id)
+		if not db_producto:
+			raise HTTPException(status_code=404, detail="Producto no encontrado")
+		db_producto.sqlmodel_update({"producto_nombre": par_nombre[1], "producto_detalle": detalle})
+		session.add(db_producto)
+		session.commit()
+		session.refresh(db_producto)
+
+		producto_id = db_producto.producto_id
+		insertar = "insert into producto_bruto values ("+str(producto_id)+", '"+par_nombre[0]+"', '"+par_nombre[1]+"')"
+		for par in pares:
+			insertar += ", ("+str(producto_id)+", '"+par[0]+"', '"+par[1]+"')"
+		session.exec(text(insertar))
+		session.commit()
+		
+		# eso es copiado el 'vendedor buscar' tambien
+		resultado_productos = session.exec(text("select c.vendedor_id, b.negocio_id, a.producto_nombre, a.producto_id, a.producto_detalle, a.producto_imagen from producto a join almacen b on a.producto_id=b.producto_id join negocio c on b.negocio_id=c.negocio_id where vendedor_id="+str(vendedor_id)))
+		session.commit()
+		productos = []
+		for i in resultado_productos:
+			productos.append(i._mapping)
+		return templates.TemplateResponse(request, "vendedor_gestionar_productos.html", {"vendedor_id": vendedor_id, "productos": productos})
+
+
+@app.post("/vendedor/cambiar/precio", name="vendedor_cambiar_precio")
+def vendedor_cambiar_precio(request: Request, vendedor_id: Annotated[int, Form()], producto_id: Annotated[int, Form()], producto_precio: Annotated[str, Form()]):
+	with Session(engine) as session:
+		if producto_precio == " ":
+			producto_precio = None
+		negocio = session.exec(text("select negocio_id from negocio where vendedor_id="+str(vendedor_id))).first()
+		session.commit()
+		negocio_id = negocio[0]
+		almacen = session.get(Almacen, (negocio_id, producto_id))
+		if not almacen:
+			nuevo_almacen = Almacen(negocio_id=negocio_id, producto_id=producto_id, producto_precio=producto_precio)
+			session.add(nuevo_almacen)
+			session.commit()
+		else: 		
+			almacen.sqlmodel_update({"producto_precio": producto_precio})
+			session.add(almacen)
+			session.commit()
+			session.refresh(almacen)
+
+@app.post("/upload/{vendedor_id}/{producto_id}", name="subir_imagen")
+def subir_imagen(request: Request, vendedor_id: int, producto_id: int, file: UploadFile = File(...)):
+    
+	os.makedirs("media", exist_ok=True)
+
+	file_path = f"media/productos/{file.filename}"
+
+    # Save uploaded file
+	with open(file_path, "wb") as buffer:
+		shutil.copyfileobj(file.file, buffer)
+	
+	with Session(engine) as session:
+		db_producto = session.get(Producto, producto_id)
+		if not db_producto:
+			raise HTTPException(status_code=404, detail="producto no encontrado")
+		db_producto.sqlmodel_update({"producto_imagen": file.filename})
+		session.add(db_producto)
+		session.commit()
+		session.refresh(db_producto)
+		# return db_producto
+
+		resultado_productos = session.exec(text("select c.vendedor_id, b.negocio_id, a.producto_nombre, a.producto_id, a.producto_detalle, a.producto_imagen from producto a join almacen b on a.producto_id=b.producto_id join negocio c on b.negocio_id=c.negocio_id where vendedor_id="+str(vendedor_id)))
+		session.commit()
+		productos = []
+		for i in resultado_productos:
+			productos.append(i._mapping)
+		return templates.TemplateResponse(request, "vendedor_gestionar_productos.html", {"vendedor_id": vendedor_id, "productos": productos})
+
+
 
 @app.get("/vendedor/salir/{vendedor_id}", name="vendedor_salir")
 def vendedor_salir(request: Request, vendedor_id: int):
@@ -199,7 +345,7 @@ def vendedor_salir(request: Request, vendedor_id: int):
 @app.get("/vendedor/buscar/{vendedor_id}", name="vendedor_buscar")
 def buscar(request: Request, vendedor_id: int, busqueda: str):
 	with Session(engine) as session:
-		resultado_productos = session.exec(text("select * from (select id from producto_bruto where valor like '%"+busqueda+"%' group by id) a left join (select p.producto_id, p.producto_nombre, p.producto_detalle, p.producto_imagen, negocio.negocio_id, negocio.vendedor_id from producto p left join almacen on p.producto_id=almacen.producto_id left join negocio on almacen.negocio_id = negocio.negocio_id) b on a.id=b.producto_id"))
+		resultado_productos = session.exec(text("select * from (select id from producto_bruto where valor like '%"+busqueda+"%' group by id) a left join (select p.producto_id, p.producto_nombre, p.producto_detalle, p.producto_imagen, negocio.negocio_id, negocio.vendedor_id, almacen.producto_precio from producto p left join almacen on p.producto_id=almacen.producto_id left join negocio on almacen.negocio_id = negocio.negocio_id) b on a.id=b.producto_id"))
 
 		# select * from (select id from producto_bruto where valor like '%"+busqueda+"%' group by id) a left join (select producto.producto_id, almacen.negocio_id from producto left join almacen on producto.producto_id=almacen.producto_id) b on a.id=b.producto_id
 		# select * from (select id from producto_bruto where valor like '%iphone%' group by id) a left join (select producto.producto_id, almacen.negocio_id from producto left join almacen on producto.producto_id=almacen.producto_id) b on a.id=b.producto_id
@@ -250,17 +396,28 @@ def negocio_cambiar_ubicacion(request: Request, negocio_id: int, nuevo_municipio
 		session.refresh(db_negocio)
 		return templates.TemplateResponse(request, "vendedor_negocio.html", {"vendedor_id": db_negocio.vendedor_id, "negocio": db_negocio})
 
-@app.get("/negocio/cambiar/imagen/{negocio_id}/", name="negocio_cambiar_imagen")
-def negocio_cambiar_imagen(request: Request, negocio_id: int, nueva_imagen: str):
+@app.post("/negocio/cambiar/imagen/{vendedor_id}/{negocio_id}/", name="negocio_cambiar_imagen")
+def negocio_cambiar_imagen(request: Request, vendedor_id: int, negocio_id: int , file: UploadFile = File(...)):
+    
+	os.makedirs("media", exist_ok=True)
+
+	file_path = f"media/negocios/{file.filename}"
+
+    # Save uploaded file
+	with open(file_path, "wb") as buffer:
+		shutil.copyfileobj(file.file, buffer)
+	
 	with Session(engine) as session:
 		db_negocio = session.get(Negocio, negocio_id)
 		if not db_negocio:
 			raise HTTPException(status_code=404, detail="Negocio no encontrado")
-		db_negocio.sqlmodel_update({"negocio_imagen": "https://i.ytimg.com/vi/5sdOrhS6ypI/maxresdefault.jpg" }) 
+		db_negocio.sqlmodel_update({"negocio_imagen": file.filename})
 		session.add(db_negocio)
 		session.commit()
 		session.refresh(db_negocio)
-		return templates.TemplateResponse(request, "vendedor_negocio.html", {"vendedor_id": db_negocio.vendedor_id, "negocio": db_negocio})
+		# return db_negocio
+
+		return templates.TemplateResponse(request, "vendedor_negocio.html", {"vendedor_id": vendedor_id, "negocio": db_negocio})
 
 @app.get("/negocio/cambiar/descripcion/{negocio_id}/", name="negocio_cambiar_descripcion")
 def negocio_cambiar_nombre(request: Request, negocio_id: int, nueva_descripcion: str):
@@ -470,7 +627,7 @@ def busqueda_producto(request: Request, producto_id: int):
 # 	print([dict(r._mapping) for r in resultado])
 	
 # CRUD almacen
-@app.post("/almacen", response_model=Almacen)
+@app.post("/almacen", response_model=Almacen, name="alma")
 def create_almacen(almacen: Almacen):
 	with Session(engine) as session:
 		session.add(almacen)

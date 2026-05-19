@@ -188,16 +188,12 @@
 {% endmacro -%}
 
 {% macro cartaHorizontal(producto) -%}
-    <div class="carta">
+    <div class="carta" id="carta{{ producto.producto_id }}">
         <div class="imagen-fondo"
-        {% if producto.producto_imagen %}
-            style="background-image: url('{{ producto.producto_imagen }}')"
-        {% endif %}
+            style="background-image: url('{{ url_for('media', path='productos/'+producto.producto_imagen) }}')"
         >
             <div class="imagen" 
-            {% if producto.producto_imagen %}
-                style="background-image: url('{{ producto.producto_imagen }}')"
-            {% endif %}
+                style="background-image: url('{{ url_for('media', path='productos/'+producto.producto_imagen) }}')"
             > 
                 {% if producto.producto_precio %}
                 <div class="precio">{{ producto.producto_precio }}</div>
@@ -211,24 +207,45 @@
                 </a>
             </div>
             <div class="detalle">
-                {% if producto.producto_detalle %}
+            {% if producto.producto_detalle %}
                 {% for d in producto.producto_detalle.split('\n') %}
                     {% set x = d.split(':') %}
                     <p><b>{{ x[0] }}:</b>{{ x[1] }}</p>
                 {% endfor %}
                 <div class="mas">
-                    <a href="">... mas</a>
+                    <span
+                        id="mas{{ producto.producto_id }}"
+                        onclick="desplegar({{ producto.producto_id }})"
+                    >
+                        ...ver mas 
+                    </span>
                 </div>
-                {% endif %}
+            {% endif %}
             </div>
             <div class="acciones">
                 <div><a href="{{ url_for('buscar_producto', producto_id=producto.producto_id) }}">Ver Tiendas</a></div>
             </div>
         </div>
     </div>
+    <script>
+        // funciona para desplegar y desdesplegar
+        function desplegar(id) {
+            document.getElementById("carta"+id).setAttribute('style', 'grid-auto-rows: auto');
+            mas = document.getElementById("mas"+id)
+            mas.innerHTML = "menos";
+            mas.setAttribute('onclick', "ocultar('"+id+"')");
+        }
+        function ocultar(id) {
+            document.getElementById("carta"+id).setAttribute('style', 'grid-auto-rows: 200px');
+            mas = document.getElementById("mas"+id)
+            mas.innerHTML = "...ver mas";
+            mas.setAttribute('onclick', "desplegar('"+id+"')");
+        }
+    </script>
     <style>
         .carta {
             width: 80%;
+            min-height: 200px;
             display: grid;
             grid-template-columns: 4fr 8fr;
             grid-auto-rows: 200px;
@@ -291,6 +308,11 @@
             right: 0;
             background-color: var(--color-blanco);
             width: 100%;
+            color: blue;
+            
+        }
+        .carta .informacion .mas span {
+            cursor: pointer;
         }
         .carta .informacion .acciones {
             display: flex;
@@ -300,44 +322,64 @@
         .carta .informacion .acciones div {
             margin: 0 4px;
         }
+        
     </style>
 {% endmacro -%}
 
 {% macro cartaHorizontalVendedor(producto) -%}
-    <div class="carta">
+    <div class="carta" id="carta{{ producto.producto_id }}">
         <div class="imagen-fondo"
-        {% if producto.producto_imagen %}
-            style="background-image: url('{{ producto.producto_imagen }}')"
-        {% endif %}
+            style="background-image: url('{{ url_for('media', path='productos/'+producto.producto_imagen) }}')"
         >
             <div class="imagen" 
-            {% if producto.producto_imagen %}
-                style="background-image: url('{{ producto.producto_imagen }}')"
-            {% endif %}
+                style="background-image: url('{{ url_for('media', path='productos/'+producto.producto_imagen) }}')"
             > 
-                {% if producto.producto_precio %}
-                <div class="precio">{{ producto.producto_precio }}</div>
-                {% endif %}
             </div>
         </div>
         <div class="informacion">
             <div class="nombre">
-                <a href="">
-                    {{ producto.producto_nombre }}
-                </a>
+                {{ producto.producto_nombre }}
             </div>
             <div class="detalle">
-                {% if producto.producto_detalle %}
+            {% if producto.producto_detalle %}
                 {% for d in producto.producto_detalle.split('\n') %}
                     {% set x = d.split(':') %}
                     <p><b>{{ x[0] }}:</b>{{ x[1] }}</p>
                 {% endfor %}
                 <div class="mas">
-                    <a href="">... mas</a>
+                    <span
+                        id="mas{{ producto.producto_id }}"
+                        onclick="desplegar({{ producto.producto_id }})"
+                    >
+                        ...ver mas 
+                    </span>
                 </div>
-                {% endif %}
+            {% endif %}
             </div>
             <div class="acciones">
+                <form id="form{{producto.producto_id}}" method="POST" enctype="multipart/form-data" action="{{url_for('subir_imagen', vendedor_id=vendedor_id, producto_id=producto.producto_id)}}" >
+                    <div class="botonImagen">
+                        <label for="input{{producto.producto_id}}">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/>
+                                <polyline points="21 15 16 10 5 21"/>
+                            </svg>
+                        </label>
+                        <input onchange="cambiar_imagen({{producto.producto_id}})" type="file" id="input{{producto.producto_id}}" name="file" accept="image/*" />
+                    </div>
+                </form>
+                <div><a href="{{ url_for('vendedor_editar_producto_form', vendedor_id=vendedor_id, producto_id=producto.producto_id) }}">Editar</a></div>
+                <div>
+                    <input  type="text" maxlength="15" size="15"  
+                        id="precio{{producto.producto_id}}"
+                        onchange="cambiarPrecio({{producto.producto_id}})"
+                        {% if producto.producto_precio %}
+                            value="{{producto.producto_precio}}"
+                        {% else %}
+                            placeholder="Precio"
+                        {% endif %}
+                    >
+                </div>
                 <div>
                     <form method="get" action="{{ url_for('vendedor_adicionar_producto', vendedor_id=vendedor_id, producto_id=producto.producto_id) }}">
                         <button>
@@ -349,14 +391,54 @@
                         </button>
                     </form>
                 </div>
-                <div><a href="">Editar</a></div>
-                <div><a href="">Precio</a></div>
             </div>
         </div>
     </div>
+    <script>
+        // funciona para desplegar y desdesplegar
+        function desplegar(id) {
+            document.getElementById("carta"+id).setAttribute('style', 'grid-auto-rows: auto');
+            mas = document.getElementById("mas"+id)
+            mas.innerHTML = "menos";
+            mas.setAttribute('onclick', "ocultar('"+id+"')");
+        }
+        function ocultar(id) {
+            document.getElementById("carta"+id).setAttribute('style', 'grid-auto-rows: 200px');
+            mas = document.getElementById("mas"+id)
+            mas.innerHTML = "...ver mas";
+            mas.setAttribute('onclick', "desplegar('"+id+"')");
+        }
+
+        // para cambiar el precio
+        function cambiarPrecio(id) {
+            entrada = document.getElementById("precio"+id);
+            if (entrada.value == ""){
+                entrada.value = " ";
+            }
+            const formData = new URLSearchParams();
+            formData.append("producto_precio", entrada.value);
+            formData.append("vendedor_id", ""+{{vendedor_id}});
+            formData.append("producto_id", ""+id);
+
+            fetch("{{ url_for('vendedor_cambiar_precio') }}", {
+            method: "POST",
+            body: formData
+            }).then(res => {
+            console.log("Request complete! response:", res);
+            });
+        }
+
+
+        // para cambiar imagenes
+        function cambiar_imagen(id) {
+            document.getElementById('form'+id).submit();
+        }
+    </script>
     <style>
         .carta {
             width: 80%;
+            min-width: 700px;
+            /* min-height: 200px; */
             display: grid;
             grid-template-columns: 4fr 8fr;
             grid-auto-rows: 200px;
@@ -370,7 +452,7 @@
         }
         .carta .imagen-fondo {
             border-radius: 10px;
-            background-image: url("https://cdn0.youla.io/files/images/780_780/63/1c/631c97953a91d52eaf69db51-1.jpg");
+            /* background-image: url("https://cdn0.youla.io/files/images/780_780/63/1c/631c97953a91d52eaf69db51-1.jpg"); */
             background-size: auto 100%;
             background-repeat: no-repeat;
             background-position: center;
@@ -380,7 +462,7 @@
             width: 100%;
             height: 100%;
             border-radius: 10px;
-            background-image: url("https://cdn0.youla.io/files/images/780_780/63/1c/631c97953a91d52eaf69db51-1.jpg");
+            /* background-image: url("https://cdn0.youla.io/files/images/780_780/63/1c/631c97953a91d52eaf69db51-1.jpg"); */
             background-size: 100% auto;
             background-repeat: no-repeat;
             background-position: center;
@@ -392,11 +474,15 @@
             justify-content: right;
             align-items: end;
         } 
-        .carta .imagen-fondo .imagen .precio {
-            font-size: 1.3em;
+        .botonImagen {
             padding: 3px;
-            background-color: var(--color-dorado);
             margin-bottom: 20px;
+        }
+        .botonImagen input[type=file] {
+            display: none;
+        }
+        .botonImagen svg {
+            cursor: pointer;
         }
         .carta .informacion {
             padding: 8px;
@@ -421,6 +507,11 @@
             right: 0;
             background-color: var(--color-blanco);
             width: 100%;
+            color: blue;
+            
+        }
+        .carta .informacion .mas span {
+            cursor: pointer;
         }
         .carta .informacion .acciones {
             display: flex;
@@ -430,18 +521,35 @@
         .carta .informacion .acciones div {
             margin: 0 4px;
         }
+        .carta .informacion .acciones input[type=text] {
+
+        }
     </style>
 {% endmacro -%}
 
+
 {% macro cartaHorizontalNegocio(negocio) -%}
     <div class="carta-negocio">
-        <div class="informacion">
             <div class="nombre">
-                <a href="{{ url_for('negocio', negocio_id=negocio.negocio_id) }}">
+                <a href="">
+                {% if negocio.negocio_nombre %}
                     {{ negocio.negocio_nombre }}
+                {% endif %}
                 </a>
             </div>
-            <p class="ubicacion">{{ negocio.negocio_municipio }}/{{ negocio.negocio_zona }}/{{ negocio.negocio_direccion }}</p>
+            <p class="ubicacion">
+                {% if negocio.negocio_municipio %}
+                {{ negocio.negocio_municipio }}
+                {% endif %}
+                
+                {% if negocio.negocio_zona %}
+                /{{ negocio.negocio_zona }}
+                {% endif %}
+                
+                {% if negocio.negocio_direccion %}
+                /{{ negocio.negocio_direccion }}
+                {% endif %}
+            </p>
             <div class="detalle">
                 {% if negocio.negocio_descripcion %}
                 {% for linea in negocio.negocio_descripcion.split('\n') %}
@@ -449,17 +557,14 @@
                 {% endfor %}
                 {% endif %}
             </div>
-            <div class="acciones">
-                <div><a href="{{ url_for('negocio', negocio_id=negocio.negocio_id) }}">Más Información</a></div>
-            </div>
-        </div>
+            <div></div>
     </div>
     <style>
         .carta-negocio {
             width: 80%;
             display: grid;
-            /* grid-template-columns: 4fr 8fr; */
-            grid-auto-rows: auto;
+            grid-template-columns: 1fr;
+            grid-template-rows: 2.5em 1.5em auto 1em;
             gap: 6px;
             background-color: var(--color-blanco);
             border: 1px solid var(--color-gris);
@@ -468,72 +573,25 @@
             border-radius: 10px;
             margin: 10px auto;
         }
-        .carta-negocio .imagen-fondo {
-            border-radius: 10px;
-            background-image: url("https://cdn0.youla.io/files/images/780_780/63/1c/631c97953a91d52eaf69db51-1.jpg");
-            background-size: auto 100%;
-            background-repeat: no-repeat;
-            background-position: center;
-        }
-        .carta-negocio .imagen-fondo .imagen {
-            margin: 0;
-            width: 100%;
-            height: 100%;
-            border-radius: 10px;
-            background-image: url("https://cdn0.youla.io/files/images/780_780/63/1c/631c97953a91d52eaf69db51-1.jpg");
-            background-size: 100% auto;
-            background-repeat: no-repeat;
-            background-position: center;
-            backdrop-filter: blur(8px);
-
-            /* para acomodar el precio */
-            display: flex;
-            flex-direction: row;
-            justify-content: right;
-            align-items: end;
-        } 
-        .carta-negocio .imagen-fondo .imagen .precio {
-            font-size: 1.3em;
-            padding: 3px;
-            background-color: var(--color-dorado);
-            margin-bottom: 20px;
-        }
-        .carta-negocio .informacion {
+        
+        .carta-negocio {
             padding: 8px;
             display: grid;
-            grid-template-rows: 2.5em auto 1em;
+            
         }
-        .carta-negocio .informacion .nombre {
+        .carta-negocio .nombre {
             padding: 4px 0;
-            font-size: 1.5em;
+            font-size: 2em;
             font-weight: bold;
-            border-bottom: 1px solid var(--color-gris);
+            background: #f0f0f0;
         }
-        .carta-negocio .informacion .detalle {
-            padding-top: 4px;
-            padding-left: 4px;
-            position: relative;
-            overflow: hidden;
-        }
-        .carta-negocio .informacion .mas {
-            position: absolute;
-            bottom: 0;
-            right: 0;
-            background-color: var(--color-blanco);
-            width: 100%;
-        }
-        .carta-negocio .informacion .acciones {
-            display: flex;
-            flex-direction: row;
-            justify-content: end;
-        }
-        .carta-negocio .informacion .acciones div {
-            margin: 0 4px;
+        .carta-negocio .ubicacion {
+            font-size: 1.3em;
+            font-weight: bold;
         }
     </style>
-{% endmacro -%}
-
-
+    
+{%- endmacro %}
 
 {% macro cartaVendedor(producto) -%}
     <div class="carta-vendedor">

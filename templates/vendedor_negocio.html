@@ -17,7 +17,7 @@
         </div>
         <div class="fila">
         <form class="form-nombre" method="get" action="{{ url_for('negocio_cambiar_nombre', negocio_id=negocio.negocio_id) }}">
-            <textarea type="text" class="titulo" value="" name="nuevo_nombre" rows="2">
+            <textarea type="text" class="titulo" value="" name="nuevo_nombre" rows="2" placeholder="nombre de tu negocio">
                 {%- if negocio.negocio_nombre -%}
                     {{ negocio.negocio_nombre }}
                 {%- endif -%}
@@ -35,17 +35,17 @@
         <div class="fila">
         <form class="form-ubicacion" method="get" action="{{ url_for('negocio_cambiar_ubicacion', negocio_id=negocio.negocio_id) }}">
             <div class="ubicacion">
-                <input type="text" name="nuevo_municipio"
+                <input type="text" name="nuevo_municipio" placeholder="municipio"
                     {%- if negocio.negocio_nombre -%}
                         value="{{ negocio.negocio_municipio }}"
                     {%- endif -%} 
                 >/
-                <input type="text" name="nueva_zona"
+                <input type="text" name="nueva_zona" placeholder="zona"
                     {%- if negocio.negocio_nombre -%}
                         value="{{ negocio.negocio_zona }}"
                     {%- endif -%} 
                 >/
-                <input type="text" name="nueva_direccion" 
+                <input type="text" name="nueva_direccion" placeholder="direccion"
                     {%- if negocio.negocio_nombre -%}
                         value="{{ negocio.negocio_direccion }}"
                     {%- endif -%} 
@@ -66,23 +66,26 @@
                 
                 <img 
                 {% if negocio.negocio_imagen %}
-                    src="{{ negocio.negocio_imagen }}"
+                    src="{{ url_for('media', path='negocios/'+negocio.negocio_imagen) }}"
                 {% endif %}
                 alt="">
-                <form action="{{ url_for('negocio_cambiar_imagen', negocio_id=negocio.negocio_id) }}" id="formImagen">
-                    <label for="avatar">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/>
-                            <polyline points="21 15 16 10 5 21"/>
-                        </svg>
-                    </label>
-                    <input type="file" id="avatar" name="nueva_imagen" accept="image/png, image/jpeg" />
+                
+                <form id="form{{negocio.negocio_id}}" method="POST" enctype="multipart/form-data" action="{{url_for('negocio_cambiar_imagen', vendedor_id=vendedor_id, negocio_id=negocio.negocio_id)}}" >
+                    <div class="botonImagen">
+                        <label for="input{{negocio.negocio_id}}">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/>
+                                <polyline points="21 15 16 10 5 21"/>
+                            </svg>
+                        </label>
+                        <input onchange="cambiar_imagen({{negocio.negocio_id}})" type="file" id="input{{negocio.negocio_id}}" name="file" accept="image/*" />
+                    </div>
                 </form>
                     
             </div>
             <div class="descripcion">
                 <form method="get" action="{{ url_for('negocio_cambiar_descripcion', negocio_id=negocio.negocio_id) }}">                    
-                    <textarea class="descripcion" name="nueva_descripcion">
+                    <textarea class="descripcion" name="nueva_descripcion" placeholder="descripcion de tu negocio">
                         {%- if negocio.negocio_descripcion -%}
                             {{ negocio.negocio_descripcion }}
                         {% endif -%}
@@ -97,10 +100,10 @@
             </div>
         </div>
 <script>
-    form_imagen = document.getElementById("formImagen");
-    form_imagen.addEventListener("change", function(){
-        form_imagen.submit();
-    });
+    // para cambiar imagenes
+    function cambiar_imagen(id) {
+        document.getElementById('form'+id).submit();
+    }
 </script>
 
 <style>
@@ -202,6 +205,17 @@
     }
     .btn-imagen:hover {
         background: white;
+    }
+
+    .botonImagen {
+        padding: 3px;
+        margin-bottom: 20px;
+    }
+    .botonImagen input[type=file] {
+        display: none;
+    }
+    .botonImagen svg {
+        cursor: pointer;
     }
 
     /* .info-negocio {

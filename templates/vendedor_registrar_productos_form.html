@@ -9,16 +9,23 @@
             <p>El nombre es el unico dato obligatorio</p>
         </div>
     </div>
-    <form action="" method="post">
-        <textarea name="detalle" class="registrar-textarea" spellcheck="false">Nombre: 
-Fecha lanzamiento: 
-Descripcion: 
-Marca: 
-Memoria RAM: </textarea>
+    <form method="post" action="{{url_for('vendedor_registrar_productos', vendedor_id=vendedor_id)}}">
+        <textarea name="detalle" class="registrar-textarea" spellcheck="false" rows="10">Nombre: 
+Descripcion: </textarea>
 
         <div class="registrar-acciones">
             <button type="submit" class="btn-registrar">Registrar</button>
         </div>
     </form>
+
+<style>
+    .registrar-textarea {
+        min-width: 600px;
+        min-height: 300px;
+        padding: 10px;
+        margin-top: 10px;
+        margin-bottom: 10px;
+    }
+</style>
 
 {% endblock %}

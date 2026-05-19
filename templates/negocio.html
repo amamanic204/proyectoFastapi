@@ -58,7 +58,7 @@
             <div class="imagen-negocio">
                 <img 
                 {% if negocio.negocio_imagen %}
-                    src="{{ negocio.negocio_imagen }}"
+                    src="{{ url_for('media', path='negocios/'+negocio.negocio_imagen) }}"
                 {% endif %}
                  alt="{{ negocio.negocio_nombre }}">
             </div>

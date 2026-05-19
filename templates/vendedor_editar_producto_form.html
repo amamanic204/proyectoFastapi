@@ -1,0 +1,31 @@
+{% extends "vendedor_base.html" %}
+
+{% block principal %}
+    <div class="bloque-negocio">
+        <div class="info-negocio">
+            <p>Ingrese datos en el siguiente formato:</p>
+            <p class="instrucciones-ejemplo">Nombre: Samsung s30</p>
+            <p class="instrucciones-ejemplo">Marca: samasung</p>
+            <p>El nombre es el unico dato obligatorio</p>
+        </div>
+    </div>
+    <form method="post" action="{{url_for('vendedor_editar_producto', vendedor_id=vendedor_id, producto_id=producto.producto_id)}}">
+        <textarea name="detalle" class="registrar-textarea" spellcheck="false">
+            {{- producto.producto_detalle -}}
+        </textarea>
+
+        <div class="registrar-acciones">
+            <button type="submit" class="btn-registrar">Editar</button>
+        </div>
+    </form>
+<style>
+    .registrar-textarea {
+        min-width: 600px;
+        min-height: 300px;
+        padding: 10px;
+        margin-top: 10px;
+        margin-bottom: 10px;
+    }
+</style>
+
+{% endblock %}
