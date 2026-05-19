@@ -6,7 +6,11 @@
 
 {% block header %}
 <div class="izquierda">
-    <div style="width:70px;">{{ macros.logo() }}</div>
+    <div style="width:70px;">
+        <a href="{{url_for('index')}}">
+        {{ macros.logo() }}
+        </a>
+    </div>
 </div>
 <div class="centro">
     {{ macros.barraDeBusqueda() }}
